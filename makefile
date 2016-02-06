@@ -2,7 +2,7 @@ CC = gcc -fno-stack-protector -m32 -c
 
 CFLAGS = -Wall
 
-OBJECTS = kernel.o stringlib.o
+OBJECTS = kernel.o stringlib.o font.o
 
 
 all: $(OBJECTS)
@@ -14,6 +14,9 @@ all: $(OBJECTS)
 
 run: all
 	qemu-system-i386 -kernel kernel
+
+fontcompiler: font.c font.h
+	gcc font.c -o fontcompiler -D FONTCOMPILER -lm
 
 clean:
 	rm kernel *.o

@@ -104,7 +104,7 @@ unsigned int string_len(const char *a){
 
 char * string_copy(char * dest, const char * a){
 	char *s, *d;
-	if(!s || !dest) return FALSE;
+	if(!a || !dest) return FALSE;
 	for(s = (char*) a, d=dest; *s; *d++ = *s++);
 	*d = 0;
 	return dest;
