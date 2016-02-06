@@ -141,7 +141,7 @@ int mm_init(void) {
 
 
 
-void* alloc(size_t size) {  
+void* mm_alloc(size_t size) {  
     if (size <= 0) {
         return NULL;
     }
@@ -215,7 +215,7 @@ void mm_free(void* ptr) {
     }
 }
 
-size_t memcopy(void *new, void *old, size_t bytes) {
+size_t mm_copy(void *new, void *old, size_t bytes) {
     char *n = (char *)new;
     char *o = (char *)old;
     while(bytes --> 0) {
@@ -240,13 +240,13 @@ void* mm_realloc(void* ptr, size_t size)
     // just call malloc (which they should have done anyways)
     if (ptr == NULL)
     {
-        return alloc(size);
+        return mm_alloc(size);
     }
 
     // attempt to get new memory
     // obviously there is a better way to do this
     // but I'm REALLY tired ( and I discussed that way in my readme )
-    void* newptr = alloc(size);
+    void* newptr = mm_alloc(size);
 
     // the new malloc fails! oh well, we should probably tell they used they failed...
     // their old pointer will work, but the new one will be borked
@@ -266,7 +266,7 @@ void* mm_realloc(void* ptr, size_t size)
     }
 
     // copy their data (yeah this is the slow part)
-    memcopy(newptr, ptr, oldsize);
+    mm_copy(newptr, ptr, oldsize);
 
     // free the old memory
     mm_free(ptr);

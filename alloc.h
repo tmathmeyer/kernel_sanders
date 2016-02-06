@@ -56,9 +56,9 @@
 
 
 int mm_init(void);
-void* alloc(size_t size);  
+void* mm_alloc(size_t size);  
 void mm_free(void* ptr);
-size_t memcopy(void *new, void *old, size_t bytes);
+size_t mm_copy(void *new, void *old, size_t bytes);
 void* mm_realloc(void* ptr, size_t size);
 
 #endif
