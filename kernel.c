@@ -1,15 +1,13 @@
 #include "keyboard_map.h"
+#include "screentext.h"
 
-#define LINES 25
-#define COLUMNS_IN_LINE 80
-#define BYTES_FOR_EACH_ELEMENT 2
-#define SCREENSIZE BYTES_FOR_EACH_ELEMENT * COLUMNS_IN_LINE * LINES
 #define KEYBOARD_DATA_PORT 0x60
 #define KEYBOARD_STATUS_PORT 0x64
 #define IDT_SIZE 256
 #define INTERRUPT_GATE 0x8e
 #define KERNEL_CODE_SEGMENT_OFFSET 0x08
 #define ENTER_KEY_CODE 0x1C
+#define BACKSPACE_KEY_CODE 0x0E
 
 extern unsigned char keyboard_map[128];
 extern void keyboard_handler(void);
@@ -17,8 +15,6 @@ extern char read_port(unsigned short port);
 extern void write_port(unsigned short port, unsigned char data);
 extern void load_idt(unsigned long *idt_ptr);
 
-unsigned int current_loc = 0; // cursor
-char *vidptr = (char*)0xb8000; //for vidmemory
 
 struct IDT_entry {
     unsigned short int offset_lowerbits;
@@ -60,27 +56,6 @@ void kb_init(void) {
     write_port(0x21 , 0xFD); /* enable keyboard */
 }
 
-void kprint(const char *str) {
-    unsigned int i = 0;
-    while (str[i] != '\0') {
-        vidptr[current_loc++] = str[i++];
-        vidptr[current_loc++] = 0x07;
-    }
-}
-
-void kprint_newline(void) {
-    unsigned int line_size = BYTES_FOR_EACH_ELEMENT * COLUMNS_IN_LINE;
-    current_loc = current_loc + (line_size - current_loc % (line_size));
-}
-
-void clear_screen(void) {
-    unsigned int i = 0;
-    while (i < SCREENSIZE) {
-        vidptr[i++] = ' ';
-        vidptr[i++] = 0x07;
-    }
-}
-
 void keyboard_handler_main(void) {
     unsigned char status;
     char keycode;
@@ -95,17 +70,19 @@ void keyboard_handler_main(void) {
             return;
 
         if(keycode == ENTER_KEY_CODE) {
-            kprint_newline();
+            screentext_newline();
             return;
         }
-
-        vidptr[current_loc++] = keyboard_map[(unsigned char) keycode];
-        vidptr[current_loc++] = 0x07;
+        if(keycode == BACKSPACE_KEY_CODE) {
+            screentext_backspace();
+            return;
+        }
+        screentext_writechar(keyboard_map[(unsigned char) keycode]);
     }
 }
 
 void kmain(void) {
-    clear_screen();
+    screentext_clear();
     idt_init();
     kb_init();
     while(1);
