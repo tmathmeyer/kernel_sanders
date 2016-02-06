@@ -82,15 +82,16 @@ void keyboard_handler_main(void) {
             screentext_backspace();
             return;
         }
-        screentext_writechar(keyboard_map[(unsigned char) keycode]);
+        console_writechar(keyboard_map[(unsigned char) keycode]);
     }
 }
 
 void kmain(void) {
-    screentext_clear();
+//    screentext_clear();
     idt_init();
     kb_init();
     console_init();
+    console_clear();
     if (!mm_init()) {
         console_print("memory_checking\n");
         char *mem = mm_alloc(256);

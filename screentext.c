@@ -14,6 +14,7 @@ int vid_bpc = 2;
 char * vidptr = (char*) 0xb8000;
 
 char * screen_outbuffer[25];
+char * screen_bigbuffer[250];
 int screen_outbufferx = 0;
 int screen_outbuffery = 0;
 
@@ -102,7 +103,7 @@ void screentext_print(char * c){
 int console_init(void){
 	int i;
 	for(i = 0; i < vid_lines; i++){
-		screen_outbuffer[i] = mm_alloc(vid_col + 1);
+		screen_outbuffer[i] = screen_bigbuffer+(i * 80);//mm_alloc(vid_col + 1);
 		mmemset(screen_outbuffer[i], 0, vid_col+1);
 	}
 	return i;
@@ -152,5 +153,14 @@ int console_print(char *s){
 	screen_outbuffer[screen_outbuffery][screen_outbufferx] = 0;
 	if(needsupdate) console_screendraw();
 	else console_screendraw(); // todo
+	screen_cursory = vid_lines-1;
+	screen_cursorx = screen_outbufferx;
+	update_cursor();
 	return 1;
+}
+
+int console_writechar(char c){
+	char biddy[2] ={0};
+	biddy[0] = c;
+	return console_print(biddy);
 }
