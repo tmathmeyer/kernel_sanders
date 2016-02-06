@@ -28,4 +28,7 @@ char * string_cat(char * dest, const char * a);
 
 void * mmemset(void *s, int c, size_t n);
 
+int atoi(const char *a);
+char *itoa(const int i);
+
 #endif
