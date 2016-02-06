@@ -1,0 +1,55 @@
+#include "alloc.h"
+#include "kernel.h"
+
+typedef
+struct header {
+    size_t nxpr : 29;
+    size_t free : 1;
+    size_t last : 1;
+    size_t other_B : 1;
+} blockhdr;
+
+#define MEM_LO 0x8000000
+#define MEM_SIZE 0x1FFFFFF0
+
+blockhdr *link = NULL;
+
+int mm_init(void) {
+    blockhdr *lowloc = (blockhdr *)MEM_LO;
+    lowloc->nxpr = MEM_SIZE;
+    lowloc->free = 1;
+    lowloc->last = 1;
+    link = lowloc;
+    
+    blockhdr *highloc = (blockhdr *)(MEM_LO + MEM_SIZE - sizeof(struct header));
+    highloc->nxpr = 0;
+    lowloc->free=1;
+}
+
+blockhdr *split_block(blockhdr *block, size_t size) {
+    
+    blockhdr *newtail = ((void *)block) + (size + sizeof(struct header));
+    blockhdr *nexthead = ((void *)block) + (size + 2*sizeof(struct header));
+
+    newtail->free = 1;
+    nexthead->free = 1;
+}
+
+
+void* mm_alloc(size_t size) {
+    if (size <= 0) {
+        return NULL;
+    }
+    
+    
+}
+
+
+
+
+
+
+void* mm_zalloc(size_t size);  
+void mm_free(void* ptr);
+size_t mm_copy(void *new, void *old, size_t bytes);
+void* mm_realloc(void* ptr, size_t size);
