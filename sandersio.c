@@ -2,7 +2,7 @@
 #include "screentext.h"
 #include "stringlib.h"
 
-int print(const char *string) {
+int sanders_print(const char *string) {
 	int charc = 0;
 	const char *head = string;
 	while(*head) {
@@ -46,12 +46,14 @@ int sanders_printf(char fmt[], ...) {
 						char *temp;
 						switch(c) {
 							case 'd':
-								temp = itoa(*arg);
-								print(temp);
+							case 'i':
+							case 'p':
+								temp = itoa((int) *arg);
+								sanders_print(temp);
 								mm_free(temp);
 								break;
 							case 's':
-								print((char *) *arg);
+								sanders_print((char *) *arg);
 								break;
 						}
 					}

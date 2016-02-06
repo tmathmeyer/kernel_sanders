@@ -3,6 +3,7 @@
 #include "alloc.h"
 #include "syscall.h"
 #include "sandersio.h"
+#include "stringlib.h"
 
 #define KEYBOARD_DATA_PORT 0x60
 #define KEYBOARD_STATUS_PORT 0x64
@@ -107,7 +108,6 @@ void kmain(void) {
         mm_free(mem3);
         mm_free(mem4);
         console_print("memory OK\n");
-        sanders_printf("Welcome to Kernel Sanders, %s", VERSION_STRING);
     }
 
     while(1);
