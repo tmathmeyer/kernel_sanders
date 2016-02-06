@@ -111,7 +111,7 @@ int console_screendraw(void){
 	//slide through the text
 	int y;
 	for(y = 0; y < vid_lines; y++){
-		int cplace = y;//(y + screen_outbuffery + 1) % vid_lines;
+		int cplace = (y + screen_outbuffery + 1) % vid_lines;
 		int x;
 		char * boof = screen_outbuffer[cplace];
 		for( x = 0; boof[x] && x < vid_col; x++){
