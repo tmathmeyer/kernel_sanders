@@ -133,6 +133,10 @@ int systemcheck() {
     return 1;
 }
 
+void *__syscall(char *c) {
+    return map_get(syscall_map, c);
+}
+
 
 void kmain(void) {
     screentext_clear();
@@ -142,6 +146,10 @@ void kmain(void) {
     console_clear();
     if (systemcheck()) {
         syscall_map = map_new();
+            map_put(syscall_map, "dvorak", dvorak);
+            map_put(syscall_map, "h.soav", dvorak);
+            map_put(syscall_map, "qwerty", qwerty);
+            map_put(syscall_map, "',.pyf", qwerty);
         sanders_printf("Welcome to Kernel Sanders, %s\n\n\n\n", VERSION_STRING);
         while(1);
     }

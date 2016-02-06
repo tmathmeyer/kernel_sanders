@@ -15,5 +15,7 @@ static inline int qwerty(int argc, char* argv[]) {
     return 0;
 }
 
+void *__syscall(char *);
+#define SYSCALL(x) (__syscall((x)))
 
 #endif // __syscall_h__
