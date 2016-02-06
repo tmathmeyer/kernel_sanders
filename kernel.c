@@ -1,5 +1,7 @@
 #include "keyboard_map.h"
 #include "screentext.h"
+#include "alloc.h"
+#include "syscall.h"
 
 #define KEYBOARD_DATA_PORT 0x60
 #define KEYBOARD_STATUS_PORT 0x64
@@ -9,7 +11,7 @@
 #define ENTER_KEY_CODE 0x1C
 #define BACKSPACE_KEY_CODE 0x0E
 
-extern unsigned char keyboard_map[128];
+unsigned char* keyboard_map;
 extern void keyboard_handler(void);
 extern char read_port(unsigned short port);
 extern void write_port(unsigned short port, unsigned char data);
@@ -54,6 +56,8 @@ void idt_init(void) {
 
 void kb_init(void) {
     write_port(0x21 , 0xFD); /* enable keyboard */
+    qwerty();
+    //dvorak();
 }
 
 void keyboard_handler_main(void) {
@@ -85,5 +89,20 @@ void kmain(void) {
     screentext_clear();
     idt_init();
     kb_init();
+    if (!mm_init()) {
+        kprint("memory_checking");
+        kprint_newline();
+        char *mem = mm_alloc(256);
+        char *mem2 = mm_alloc(256);
+        mm_free(mem);
+        char *mem3 = mm_alloc(128);
+        char *mem4 = mm_alloc(256);
+        mm_free(mem2);
+        mm_free(mem3);
+        mm_free(mem4);
+        kprint("memory OK");
+        kprint_newline();
+    }
+
     while(1);
 }
