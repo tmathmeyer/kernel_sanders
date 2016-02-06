@@ -2,6 +2,7 @@
 #include "screentext.h"
 #include "alloc.h"
 #include "syscall.h"
+#include "sanders_shell.h"
 
 #define KEYBOARD_DATA_PORT 0x60
 #define KEYBOARD_STATUS_PORT 0x64
@@ -17,6 +18,8 @@ extern char read_port(unsigned short port);
 extern void write_port(unsigned short port, unsigned char data);
 extern void load_idt(unsigned long *idt_ptr);
 
+unsigned char sandersin[255];
+unsigned char sandersindex = 0;
 
 struct IDT_entry {
     unsigned short int offset_lowerbits;
@@ -75,13 +78,16 @@ void keyboard_handler_main(void) {
 
         if(keycode == ENTER_KEY_CODE) {
             screentext_newline();
+            sandersindex = 0;
             return;
         }
         if(keycode == BACKSPACE_KEY_CODE) {
             screentext_backspace();
+            sandersin[sandersindex--] = 0;
             return;
         }
         screentext_writechar(keyboard_map[(unsigned char) keycode]);
+        sandersin[sandersindex++] = keyboard_map[(unsigned char) keycode];
     }
 }
 
