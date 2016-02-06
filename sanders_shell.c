@@ -75,10 +75,10 @@ void shell_run(char *line) {
 
 
 shell_func shell_command_lookup(char *cmd) {
-	if (gs_comp((char*)cmd, "dvorak") == 0) {
+	if (gs_comp(cmd, "dvorak") == 0 || gs_comp(cmd, "h.soav") == 0) {
 		return (shell_func) dvorak;
 	}
-	if (gs_comp((char*)cmd, "qwerty") == 0) {
+	if (gs_comp(cmd, "qwerty") == 0 || gs_comp(cmd, "',.pyf") == 0) {
 		return (shell_func) qwerty;
 	}
 	if (gs_comp((char*)cmd, "halt") == 0) {
