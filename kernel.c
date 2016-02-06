@@ -89,9 +89,9 @@ void kmain(void) {
     screentext_clear();
     idt_init();
     kb_init();
+    console_init();
     if (!mm_init()) {
-        screentext_print("memory_checking");
-        screentext_newline();
+        console_print("memory_checking\n");
         char *mem = mm_alloc(256);
         char *mem2 = mm_alloc(256);
         mm_free(mem);
@@ -100,8 +100,7 @@ void kmain(void) {
         mm_free(mem2);
         mm_free(mem3);
         mm_free(mem4);
-        screentext_print("memory OK");
-        screentext_newline();
+        console_print("memory OK\n");
     }
 
     while(1);

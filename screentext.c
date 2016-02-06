@@ -111,17 +111,29 @@ int console_screendraw(void){
 	//slide through the text
 	int y;
 	for(y = 0; y < vid_lines; y++){
-		int cplace = (y + screen_outbuffery + 1) % vid_lines;
+		int cplace = y;//(y + screen_outbuffery + 1) % vid_lines;
 		int x;
 		char * boof = screen_outbuffer[cplace];
-		for( x = 0; boof[x]; x++){
+		for( x = 0; boof[x] && x < vid_col; x++){
 			screentext_writecharplacenc(boof[x], x, y);
 		}
+		for(;x < vid_col; x++){
+			screentext_writecharplacenc(' ', x, y);
+		}
+
 	}
 	return y;
 }
 int console_screendrawrange(int mx, int x){
 	return 0;
+}
+void console_clear(void){
+	int i = 0;
+	screen_outbuffery = 0;
+	for(i =0; i < vid_lines; i++){
+		*screen_outbuffer[i] = 0;
+	}
+	console_screendraw();
 }
 int console_print(char *s){
 	int needsupdate = 0;

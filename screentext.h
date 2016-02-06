@@ -12,5 +12,9 @@ void screentext_backspace(void);
 
 void screentext_print(char * c);
 
+int console_init(void);
+void console_clear(void);
+int console_print(char *s);
+
 
 #endif
