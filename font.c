@@ -11,7 +11,7 @@
 
 #ifdef FONTCOMPILER
 
-int main( const int argc, const char **argv){
+int main(const int argc, const char **argv){
 	return 0;
 }
 
