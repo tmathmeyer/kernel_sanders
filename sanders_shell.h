@@ -1,7 +1,7 @@
-// A function pointer
 #ifndef SHELL_HEADER
 #define SHELL_HEADER
 
+// A function pointer
 typedef int (*shell_func)(int argc, char *argv[]);
 
 shell_func shell_command_lookup(char *cmd);
