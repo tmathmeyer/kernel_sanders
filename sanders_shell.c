@@ -1,15 +1,16 @@
 #include "sanders_shell.h"
+#include "syscall.h"
 
-void shell_run(char *line) {
-	char *cmd;
-	char *args;
+void shell_run(unsigned char *line) {
+	unsigned char *cmd;
+	unsigned char *args;
 
 	int argc = 0;
 	shell_func func;
 
 	cmd = line;
 
-	char *head = line;
+	unsigned char *head = line;
 	while (*head != ' ' && *head) {
 		head++;
 	}
@@ -37,7 +38,7 @@ void shell_run(char *line) {
 	}
 
 	// Set argv
-	char *argv[argc];
+	unsigned char *argv[argc];
 	argc = 0;
 	// Set head back to start
 	head = args;
@@ -66,10 +67,16 @@ void shell_run(char *line) {
 }
 
 
-shell_func shell_command_lookup(char *cmd) {
+shell_func shell_command_lookup(unsigned char *cmd) {
+	if (gs_comp(cmd, "dvorak") == 0) {
+		return (shell_func) dvorak;
+	}
+	if (gs_comp(cmd, "qwerty") == 0) {
+		return (shell_func) qwerty;
+	}
 	return invalid_command;
 }
 
-int invalid_command(int argc, char *argv[]) {
+int invalid_command(int argc, unsigned char *argv[]) {
 	return 0;
 }
