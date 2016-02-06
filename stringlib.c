@@ -1,4 +1,5 @@
-
+//#include "alloc.h"
+typedef unsigned int size_t;
 #include "stringlib.h"
 #define TRUE 1
 #define FALSE 0
@@ -115,4 +116,11 @@ char * string_cat(char * dest, const char *a){
 	for(s = (char *)a; *s; *d++ = *s++);
 	*d = 0;
 	return dest;
+}
+
+void * string_memset(void *s, int c, size_t n){
+	for(; n; n--, s++){
+		*((unsigned char *)s) = c;
+	}
+	return s;
 }

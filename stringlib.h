@@ -26,4 +26,6 @@ unsigned int string_len(const char *a);
 char * string_copy(char * dest, const char * a);
 char * string_cat(char * dest, const char * a);
 
+void * string_memset(void *s, int c, size_t n);
+
 #endif
