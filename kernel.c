@@ -62,37 +62,40 @@ void kb_init(void) {
 }
 
 void keyboard_handler_main(void) {
+
     unsigned char status;
     char keycode;
-    /* write EOI */
+    // write EOI
     write_port(0x20, 0x20);
 
     status = read_port(KEYBOARD_STATUS_PORT);
-    /* Lowest bit of status will be set if buffer is not empty */
+    // Lowest bit of status will be set if buffer is not empty
     if (status & 0x01) {
         keycode = read_port(KEYBOARD_DATA_PORT);
         if(keycode < 0)
             return;
 
         if(keycode == ENTER_KEY_CODE) {
-            screentext_newline();
+            console_print("\n");
             return;
         }
         if(keycode == BACKSPACE_KEY_CODE) {
-            screentext_backspace();
+//            screentext_backspace();
             return;
         }
-        screentext_writechar(keyboard_map[(unsigned char) keycode]);
+        console_writechar(keyboard_map[(unsigned char) keycode]);
     }
+
 }
 
 void kmain(void) {
     screentext_clear();
     idt_init();
     kb_init();
+    console_init();
+    console_clear();
     if (!mm_init()) {
-        screentext_print("memory_checking");
-        screentext_newline();
+        console_print("memory_checking\n");
         char *mem = mm_alloc(256);
         char *mem2 = mm_alloc(256);
         mm_free(mem);
@@ -101,8 +104,7 @@ void kmain(void) {
         mm_free(mem2);
         mm_free(mem3);
         mm_free(mem4);
-        screentext_print("memory OK");
-        screentext_newline();
+        console_print("memory OK\n");
     }
 
     while(1);

@@ -1,5 +1,5 @@
-//#include "alloc.h"
-typedef unsigned int size_t;
+#include "alloc.h"
+//typedef unsigned int size_t;
 #include "stringlib.h"
 #include "alloc.h"
 #include "screentext.h"
