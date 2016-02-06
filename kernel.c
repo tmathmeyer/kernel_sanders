@@ -1,8 +1,9 @@
-#include "keyboard_map.h"
 #include "screentext.h"
 #include "alloc.h"
+#include "sanders_shell.h"
 #include "syscall.h"
-
+#include "keyboard_map.h"
+#include "sandersio.h"
 
 #define KEYBOARD_DATA_PORT 0x60
 #define KEYBOARD_STATUS_PORT 0x64
@@ -12,12 +13,16 @@
 #define ENTER_KEY_CODE 0x1C
 #define BACKSPACE_KEY_CODE 0x0E
 
+#define VERSION_STRING "Version 0.0.0"
+
 unsigned char* keyboard_map;
 extern void keyboard_handler(void);
 extern char read_port(unsigned short port);
 extern void write_port(unsigned short port, unsigned char data);
 extern void load_idt(unsigned long *idt_ptr);
 
+unsigned char sandersin[255];
+unsigned char sandersindex = 0;
 
 struct IDT_entry {
     unsigned short int offset_lowerbits;
@@ -57,8 +62,8 @@ void idt_init(void) {
 
 void kb_init(void) {
     write_port(0x21 , 0xFD); /* enable keyboard */
-    qwerty();
-    //dvorak();
+    qwerty((int)0,(char**)0);
+    //dvorak((int)0, (char**)0);
 }
 
 void keyboard_handler_main(void) {
@@ -77,13 +82,17 @@ void keyboard_handler_main(void) {
 
         if(keycode == ENTER_KEY_CODE) {
             console_print("\n");
+            sandersindex = 0;
+            shell_run((char*)sandersin);
             return;
         }
         if(keycode == BACKSPACE_KEY_CODE) {
-//            screentext_backspace();
+            screentext_backspace();
+            sandersin[sandersindex--] = 0;
             return;
         }
         console_writechar(keyboard_map[(unsigned char) keycode]);
+        sandersin[sandersindex++] = keyboard_map[(unsigned char) keycode];
     }
 
 }
@@ -105,6 +114,7 @@ void kmain(void) {
         mm_free(mem3);
         mm_free(mem4);
         console_print("memory OK\n");
+        sanders_printf("Welcome to Kernel Sanders, %s", VERSION_STRING);
     }
 
     while(1);
