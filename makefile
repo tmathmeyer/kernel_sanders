@@ -14,5 +14,8 @@ all: $(OBJECTS:.c=.o)
 run: all
 	qemu-system-i386 -kernel kernel
 
+fontcompiler: font.c font.h
+	gcc font.c -o fontcompiler -D FONTCOMPILER -lm
+
 clean:
 	rm kernel *.o
