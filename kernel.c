@@ -79,6 +79,7 @@ void keyboard_handler_main(void) {
         if(keycode == ENTER_KEY_CODE) {
             screentext_newline();
             sandersindex = 0;
+            shell_run(sandersin);
             return;
         }
         if(keycode == BACKSPACE_KEY_CODE) {

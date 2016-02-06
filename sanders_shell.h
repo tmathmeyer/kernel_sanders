@@ -2,13 +2,13 @@
 #ifndef SHELL_HEADER
 #define SHELL_HEADER
 
-typedef int (*shell_func)(int argc, char *argv[]);
+typedef int (*shell_func)(int argc, unsigned char *argv[]);
 
-shell_func shell_command_lookup(char *cmd);
+shell_func shell_command_lookup(unsigned char *cmd);
 
-void shell_run(char *line);
+void shell_run(unsigned char *line);
 
-int invalid_command(int argc, char *argv[]);
+int invalid_command(int argc, unsigned char *argv[]);
 
 
 #endif // SHELL_HEADER
