@@ -5,14 +5,15 @@
 
 extern unsigned char* keyboard_map;
 
-void dvorak(void) {
+int dvorak(int argc, char* argv[]) {
     keyboard_map = dvorak_keyboard_map;
-    return;
+    return 0;
 }
 
-void qwerty(void) {
+int qwerty(int argc, char* argv[]) {
     keyboard_map = qwerty_keyboard_map;
-    return;
+    return 0;
 }
+
 
 #endif // __syscall_h__

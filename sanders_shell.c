@@ -1,4 +1,5 @@
 #include "sanders_shell.h"
+#include "syscall.h"
 
 void shell_run(unsigned char *line) {
 	unsigned char *cmd;
@@ -67,6 +68,12 @@ void shell_run(unsigned char *line) {
 
 
 shell_func shell_command_lookup(unsigned char *cmd) {
+	if (gs_comp(cmd, "dvorak") == 0) {
+		return (shell_func) dvorak;
+	}
+	if (gs_comp(cmd, "qwerty") == 0) {
+		return (shell_func) qwerty;
+	}
 	return invalid_command;
 }
 

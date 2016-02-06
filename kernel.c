@@ -59,8 +59,8 @@ void idt_init(void) {
 
 void kb_init(void) {
     write_port(0x21 , 0xFD); /* enable keyboard */
-    qwerty();
-    //dvorak();
+    qwerty(0,0);
+    //dvorak(0,0);
 }
 
 void keyboard_handler_main(void) {
