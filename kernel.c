@@ -97,6 +97,7 @@ void keyboard_handler_main(void) {
 
 }
 
+
 void kmain(void) {
     screentext_clear();
     idt_init();
