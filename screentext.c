@@ -50,6 +50,6 @@ void screentext_writechar(char c){
 void screentext_print(char * c){
 	for(;*c;c++){
 		if(*c == '\n') screentext_newline();
-		else screentext_writechar(c);
+		else screentext_writechar(*c);
 	}
 }
