@@ -47,3 +47,9 @@ void screentext_writechar(char c){
 	screen_cursory %= vid_lines;
 }
 
+void screentext_print(char * c){
+	for(;*c;c++){
+		if(*c == '\n') screentext_newline();
+		else screentext_writechar(*c);
+	}
+}

@@ -90,8 +90,8 @@ void kmain(void) {
     idt_init();
     kb_init();
     if (!mm_init()) {
-        kprint("memory_checking");
-        kprint_newline();
+        screentext_print("memory_checking");
+        screentext_newline();
         char *mem = mm_alloc(256);
         char *mem2 = mm_alloc(256);
         mm_free(mem);
@@ -100,8 +100,8 @@ void kmain(void) {
         mm_free(mem2);
         mm_free(mem3);
         mm_free(mem4);
-        kprint("memory OK");
-        kprint_newline();
+        screentext_print("memory OK");
+        screentext_newline();
     }
 
     while(1);
