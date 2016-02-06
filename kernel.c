@@ -117,9 +117,15 @@ void kmain(void) {
         char *mem = mm_alloc(256);
         if (mem) {
             kprint("memcheck OK");
+            kprint_newline();
+            mm_copy(mem, "fuck", 5);
+
+            dmap *map = map_new();
+            if (map) {
+                kprint("map ok");
+            }
         }
-        kprint("memory OK");
-        kprint_newline();
+        
     }
     while(1);
 }

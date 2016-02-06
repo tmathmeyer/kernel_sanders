@@ -31,6 +31,7 @@ int mm_init(void) {
     highloc->free = 1;
     highloc->frst = 1;
     highloc->last = 1;
+    return 0;
 }
 
 void split_block(blockhdr *block, size_t size) {
@@ -125,6 +126,11 @@ void* mm_zalloc(size_t size) {
     return mem;
 }
 
-size_t mm_copy(void *new, void *old, size_t bytes);
+size_t mm_copy(void *new, void *old, size_t bytes) {
+    while(bytes --> 0) {
+        ((char *)new)[bytes] = ((char *)old)[bytes];
+    }
+    return 0;
+}
 
 void* mm_realloc(void* ptr, size_t size);
