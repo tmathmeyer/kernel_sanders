@@ -5,14 +5,11 @@
 
 extern unsigned char* keyboard_map;
 
-void dvorak(void) {
-    keyboard_map = dvorak_keyboard_map;
-    return;
-}
 
-void qwerty(void) {
-    keyboard_map = qwerty_keyboard_map;
-    return;
-}
+int dvorak(int argc, char* argv[]);
+int qwerty(int argc, char* argv[]);
+
+void *__syscall(char *);
+#define SYSCALL(x) (__syscall((x)))
 
 #endif // __syscall_h__

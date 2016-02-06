@@ -1,7 +1,9 @@
-#include "keyboard_map.h"
 #include "screentext.h"
 #include "alloc.h"
+#include "map.h"
+#include "sanders_shell.h"
 #include "syscall.h"
+#include "keyboard_map.h"
 #include "sandersio.h"
 #include "stringlib.h"
 
@@ -21,6 +23,9 @@ extern char read_port(unsigned short port);
 extern void write_port(unsigned short port, unsigned char data);
 extern void load_idt(unsigned long *idt_ptr);
 
+unsigned char sandersin[255];
+unsigned char sandersindex = 0;
+dmap *syscall_map;
 
 struct IDT_entry {
     unsigned short int offset_lowerbits;
@@ -60,8 +65,8 @@ void idt_init(void) {
 
 void kb_init(void) {
     write_port(0x21 , 0xFD); /* enable keyboard */
-    qwerty();
-    //dvorak();
+    qwerty((int)0,(char**)0);
+    //dvorak((int)0, (char**)0);
 }
 
 void keyboard_handler_main(void) {
@@ -80,16 +85,59 @@ void keyboard_handler_main(void) {
 
         if(keycode == ENTER_KEY_CODE) {
             console_print("\n");
+            sandersin[sandersindex] = 0;
+            sandersindex = 0;
+            shell_run((char*)sandersin);
             return;
         }
         if(keycode == BACKSPACE_KEY_CODE) {
-//            screentext_backspace();
+            //screentext_backspace();
+            sandersin[sandersindex--] = 0;
             return;
         }
         console_writechar(keyboard_map[(unsigned char) keycode]);
+        sandersin[sandersindex++] = keyboard_map[(unsigned char) keycode];
     }
 
 }
+
+
+int systemcheck() {
+    if (mm_init()) { // mm_init has failed
+        return 0;
+    }
+    sanders_print("initializing system check...\n");
+
+    sanders_print("    memory... ");
+    char *mem = mm_alloc(256);
+    if (mem) {
+        sanders_print("OK\n");
+    } else {
+        return 0;
+    }
+
+    sanders_print("    hashmaps... ");
+    dmap *map = map_new();
+    if (!map) {
+        return 0;
+    }
+    mm_copy(mem, "OK\n", 4);
+    map_put(map, "test", mem);
+    char *c = (char *)map_get(map, "test");
+    if (c == mem) {
+        sanders_print(c);
+    } else {
+        return 0;
+    }
+
+    sanders_print("completed system check\n");
+    return 1;
+}
+
+void *__syscall(char *c) {
+    return map_get(syscall_map, c);
+}
+
 
 void kmain(void) {
     screentext_clear();
@@ -97,18 +145,13 @@ void kmain(void) {
     kb_init();
     console_init();
     console_clear();
-    if (!mm_init()) {
-        console_print("memory_checking\n");
-        char *mem = mm_alloc(256);
-        char *mem2 = mm_alloc(256);
-        mm_free(mem);
-        char *mem3 = mm_alloc(128);
-        char *mem4 = mm_alloc(256);
-        mm_free(mem2);
-        mm_free(mem3);
-        mm_free(mem4);
-        console_print("memory OK\n");
+    if (systemcheck()) {
+        syscall_map = map_new();
+            map_put(syscall_map, "dvorak", dvorak);
+            map_put(syscall_map, "h.soav", dvorak);
+            map_put(syscall_map, "qwerty", qwerty);
+            map_put(syscall_map, "',.pyf", qwerty);
+        sanders_printf("Welcome to Kernel Sanders, %s\n\n\n\n", VERSION_STRING);
+        while(1);
     }
-
-    while(1);
 }
