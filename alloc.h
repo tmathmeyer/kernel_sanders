@@ -54,7 +54,6 @@
 // included macro (but I modified it a bit)
 #define ALIGN(p)                (((size_t)(p) + 7) & -8)
 
-
 int mm_init(void);
 void* mm_alloc(size_t size);  
 void mm_free(void* ptr);
