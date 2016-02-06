@@ -1,31 +1,75 @@
 #include "sanders_shell.h"
 
-// p_func shell_command_lookup(char *cmd);
-
 void shell_run(char *line) {
-	char *p_cmd;
-	char *p_args;
+	char *cmd;
+	char *args;
 
+	int argc = 0;
 	shell_func func;
 
-	p_cmd = line;
-	p_args = line;
+	cmd = line;
+
+	char *head = line;
+	while (*head != ' ' && *head) {
+		head++;
+	}
 	
-	while (*p_args != ' ' && p_args) {
-		p_args++;
+	// Separate arguments and function name with null
+	*head = 0;
+	head++;
+	args = head;
+
+	// Get argc
+	while (*head) {
+		// Skip past spaces
+		while (*head == ' ') {
+			head++;
+		}
+		// Beginning of argument
+		if (*head) {
+			argc++;
+			// Go to end of argument
+			while (*head != ' ' && *head) {
+				head++;
+			}
+		}		
+		head++;
 	}
 
-	*p_args = '\0';
+	// Set argv
+	char *argv[argc];
+	argc = 0;
+	// Set head back to start
+	head = args;
+	while (*head) {
+		// Skip past spaces and set to null
+		while (*head == ' ') {
+				*head = 0;
+				head++;
+		}
+		// Beginning of argument
+		if (*head) {
+			argv[argc] = head;
+			argc++;
+			// Go to end of argument
+			while (*head != ' ' && *head) {
+				head++;
+			}
+		}
+	}
+
+	func = shell_command_lookup(cmd);
 
 
-	func = shell_command_lookup(p_cmd);
 
-	func(p_args);
+	func(argc, argv);
 }
 
 
 shell_func shell_command_lookup(char *cmd) {
-	return '\0';
+	return invalid_command;
 }
 
-
+int invalid_command(int argc, char *argv[]) {
+	return 0;
+}
