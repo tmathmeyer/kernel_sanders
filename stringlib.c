@@ -1,5 +1,5 @@
-//#include "alloc.h"
-typedef unsigned int size_t;
+#include "alloc.h"
+//typedef unsigned int size_t;
 #include "stringlib.h"
 #define TRUE 1
 #define FALSE 0
