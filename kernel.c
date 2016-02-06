@@ -1,5 +1,5 @@
-#include "keyboard_map.h"
 #include "alloc.h"
+#include "syscall.h"
 
 #define LINES 25
 #define COLUMNS_IN_LINE 80
@@ -12,7 +12,7 @@
 #define KERNEL_CODE_SEGMENT_OFFSET 0x08
 #define ENTER_KEY_CODE 0x1C
 
-extern unsigned char keyboard_map[128];
+unsigned char* keyboard_map;
 extern void keyboard_handler(void);
 extern char read_port(unsigned short port);
 extern void write_port(unsigned short port, unsigned char data);
@@ -59,6 +59,8 @@ void idt_init(void) {
 
 void kb_init(void) {
     write_port(0x21 , 0xFD); /* enable keyboard */
+    qwerty();
+    //dvorak();
 }
 
 void kprint(const char *str) {
