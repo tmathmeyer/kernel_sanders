@@ -4,6 +4,8 @@ place to put random string based functions
 #ifndef STRINGLIBHEADER
 #define STRINGLIBHEADER
 
+#include "alloc.h"
+
 #define ISWHITESPACE(char) (!(char)||(char)==' '||(char)=='\r'||(char)=='\n'||(char) =='\t')
 #define ISNUM(char) ((char) >= '0' && (char) <= '9')
 #define ISALPHA(char) ( ((char) >= 'a' && (char) <= 'z') || ((char) >= 'A' && (char) <= 'Z') )
@@ -25,5 +27,10 @@ unsigned int string_countWords(const char *s);
 unsigned int string_len(const char *a);
 char * string_copy(char * dest, const char * a);
 char * string_cat(char * dest, const char * a);
+
+void * mmemset(void *s, int c, size_t n);
+
+int atoi(const char *a);
+char *itoa(const int i);
 
 #endif

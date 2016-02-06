@@ -1,5 +1,8 @@
-
+#include "alloc.h"
+//typedef unsigned int size_t;
 #include "stringlib.h"
+#include "alloc.h"
+#include "screentext.h"
 #define TRUE 1
 #define FALSE 0
 
@@ -103,7 +106,7 @@ unsigned int string_len(const char *a){
 
 char * string_copy(char * dest, const char * a){
 	char *s, *d;
-	if(!s || !dest) return FALSE;
+	if(!a || !dest) return FALSE;
 	for(s = (char*) a, d=dest; *s; *d++ = *s++);
 	*d = 0;
 	return dest;
@@ -116,3 +119,54 @@ char * string_cat(char * dest, const char *a){
 	*d = 0;
 	return dest;
 }
+
+void * mmemset(void *s, int c, size_t n){
+	for(; n; n--, s++){
+		*((unsigned char *)s) = c;
+	}
+	return s;
+}
+
+int atoi(const char *a) {
+	const char *head = a;
+	int i = 0;
+	while (*head) {
+		i *= 10;
+		if (*head <= '9' && *head > '0') {
+			i += *head-'0';
+		}
+		head++;
+	}
+	return *a == '-' ? -i : i;
+}
+
+char *itoa(const int i) {
+	int charc = 0;
+	int temp = 1;
+	int abs_i = i < 0 ? -i : i;
+	
+	while (abs_i % temp != abs_i) {
+		charc++;
+		temp *= 10;
+	}
+
+	if (i < 0) {
+		charc++;
+	}
+
+	char *a = mm_alloc(charc+1);
+
+	int j;
+	temp = 1;
+	for (j = charc-1; j >= 0; j--) {
+		*(a+j) = (((abs_i - (abs_i % temp)) / temp) % 10) + '0';
+		temp *= 10;
+	}
+	if (i < 0) {
+		*a = '-';
+	}
+	*(a+charc) = 0;
+
+	return a;
+}
+

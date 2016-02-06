@@ -32,7 +32,6 @@ struct header {
 #define NEXT_BLKP(bp)  ((char *)(bp) + GET_SIZE(((char *)(bp) - WSIZE)))
 #define PREV_BLKP(bp)  ((char *)(bp) - GET_SIZE(((char *)(bp) - DSIZE)))
 
-
 int mm_init(void);
 void* mm_alloc(size_t size);  
 void* mm_zalloc(size_t size);  

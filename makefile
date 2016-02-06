@@ -4,7 +4,7 @@ CFLAGS = -Wall
 
 OBJECTS = $(wildcard *.c)
 
-all: $(OBJECTS:.c=.o)
+all: clear $(OBJECTS:.c=.o)
 	nasm -f elf32 kernel.asm -o kasm.o
 	ld -m elf_i386 -T link.ld -o kernel kasm.o $(OBJECTS:.c=.o)
 
@@ -14,5 +14,11 @@ all: $(OBJECTS:.c=.o)
 run: all
 	qemu-system-i386 -kernel kernel
 
+fontcompiler: font.c font.h
+	gcc font.c -o fontcompiler -D FONTCOMPILER -lm
+
 clean:
 	rm kernel *.o
+
+clear:
+	clear
