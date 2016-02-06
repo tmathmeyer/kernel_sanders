@@ -1,4 +1,5 @@
 #include "keyboard_map.h"
+#include "alloc.h"
 
 #define LINES 25
 #define COLUMNS_IN_LINE 80
@@ -108,5 +109,9 @@ void kmain(void) {
     clear_screen();
     idt_init();
     kb_init();
+    if (!mm_init()) {
+        kprint("memory OK");
+    }
+
     while(1);
 }
