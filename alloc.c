@@ -124,7 +124,8 @@ void* mm_zalloc(size_t size) {
         return mem;
     }
     char *c = (char *)mem;
-    for(int i=0;i<size;i++) {
+    int i = 0;
+    for(;i<size;i++) {
         c[i] = 0;
     }
     return mem;
@@ -133,7 +134,8 @@ void* mm_zalloc(size_t size) {
 size_t mm_copy(void *new, void *old, size_t bytes) {
     char *n = (char *)new;
     char *o = (char *)old;
-    for(int i=0;i<bytes;i++) {
+    int i = 0;
+    for(;i<bytes;i++) {
         *(n++) = *(o++);
     }
     return 0;
