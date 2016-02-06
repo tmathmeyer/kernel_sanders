@@ -1,6 +1,6 @@
 #include "halt.h"
 #include "sandersio.h"
 void halt(void){
-	print("halting");
+	sanders_print("halting");
 	asm("hlt");
 }
