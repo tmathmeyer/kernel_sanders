@@ -3,6 +3,7 @@
 #include "sanders_shell.h"
 #include "syscall.h"
 #include "keyboard_map.h"
+#include "sandersio.h"
 
 #define KEYBOARD_DATA_PORT 0x60
 #define KEYBOARD_STATUS_PORT 0x64
@@ -11,6 +12,8 @@
 #define KERNEL_CODE_SEGMENT_OFFSET 0x08
 #define ENTER_KEY_CODE 0x1C
 #define BACKSPACE_KEY_CODE 0x0E
+
+#define VERSION_STRING "Version 0.0.0"
 
 unsigned char* keyboard_map;
 extern void keyboard_handler(void);
@@ -64,20 +67,21 @@ void kb_init(void) {
 }
 
 void keyboard_handler_main(void) {
+
     unsigned char status;
     char keycode;
-    /* write EOI */
+    // write EOI
     write_port(0x20, 0x20);
 
     status = read_port(KEYBOARD_STATUS_PORT);
-    /* Lowest bit of status will be set if buffer is not empty */
+    // Lowest bit of status will be set if buffer is not empty
     if (status & 0x01) {
         keycode = read_port(KEYBOARD_DATA_PORT);
         if(keycode < 0)
             return;
 
         if(keycode == ENTER_KEY_CODE) {
-            screentext_newline();
+            console_print("\n");
             sandersindex = 0;
             shell_run((char*)sandersin);
             return;
@@ -87,18 +91,20 @@ void keyboard_handler_main(void) {
             sandersin[sandersindex--] = 0;
             return;
         }
-        screentext_writechar(keyboard_map[(unsigned char) keycode]);
+        console_writechar(keyboard_map[(unsigned char) keycode]);
         sandersin[sandersindex++] = keyboard_map[(unsigned char) keycode];
     }
+
 }
 
 void kmain(void) {
     screentext_clear();
     idt_init();
     kb_init();
+    console_init();
+    console_clear();
     if (!mm_init()) {
-        screentext_print("memory_checking");
-        screentext_newline();
+        console_print("memory_checking\n");
         char *mem = mm_alloc(256);
         char *mem2 = mm_alloc(256);
         mm_free(mem);
@@ -107,8 +113,8 @@ void kmain(void) {
         mm_free(mem2);
         mm_free(mem3);
         mm_free(mem4);
-        screentext_print("memory OK");
-        screentext_newline();
+        console_print("memory OK\n");
+        sanders_printf("Welcome to Kernel Sanders, %s", VERSION_STRING);
     }
 
     while(1);
