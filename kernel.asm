@@ -22,9 +22,9 @@ read_port:
 	ret
 
 write_port:
-	mov   edx, [esp + 4]    
-	mov   al, [esp + 4 + 4]  
-	out   dx, al  
+	mov   edx, [esp + 4]
+	mov   al, [esp + 4 + 4]
+	out   dx, al
 	ret
 
 load_idt:
@@ -33,7 +33,7 @@ load_idt:
 	sti 				;turn on interrupts
 	ret
 
-keyboard_handler:                 
+keyboard_handler:
 	call    keyboard_handler_main
 	iretd
 
