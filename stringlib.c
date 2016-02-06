@@ -118,7 +118,7 @@ char * string_cat(char * dest, const char *a){
 	return dest;
 }
 
-void * string_memset(void *s, int c, size_t n){
+void * mmemset(void *s, int c, size_t n){
 	for(; n; n--, s++){
 		*((unsigned char *)s) = c;
 	}
