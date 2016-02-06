@@ -76,11 +76,11 @@ void keyboard_handler_main(void) {
             return;
 
         if(keycode == ENTER_KEY_CODE) {
-            screentext_newline();
+            console_print("\n");
             return;
         }
         if(keycode == BACKSPACE_KEY_CODE) {
-            screentext_backspace();
+//            screentext_backspace();
             return;
         }
         console_writechar(keyboard_map[(unsigned char) keycode]);

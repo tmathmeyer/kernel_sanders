@@ -104,7 +104,7 @@ int console_init(void){
 	int i;
 	for(i = 0; i < vid_lines; i++){
 		screen_outbuffer[i] = screen_bigbuffer+(i * 80);//mm_alloc(vid_col + 1);
-		mmemset(screen_outbuffer[i], 0, vid_col+1);
+		//mmemset(screen_outbuffer[i], 0, vid_col+1);
 	}
 	return i;
 }
