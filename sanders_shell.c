@@ -1,4 +1,8 @@
 #include "sanders_shell.h"
+#include "sandersio.h"
+#include "syscall.h"
+#include "goodstring.h"
+#include "halt.h"
 
 void shell_run(char *line) {
 	char *cmd;
@@ -59,17 +63,30 @@ void shell_run(char *line) {
 	}
 
 	func = shell_command_lookup(cmd);
+	if(!func){
+		sanders_printf("BAD: %s\n", cmd);
+	} else {
+		sanders_printf("shelly: %s\n", cmd);
+		func(argc, argv);
+	}
 
 
-
-	func(argc, argv);
 }
 
 
 shell_func shell_command_lookup(char *cmd) {
-	return invalid_command;
+	if (gs_comp((char*)cmd, "dvorak") == 0) {
+		return (shell_func) dvorak;
+	}
+	if (gs_comp((char*)cmd, "qwerty") == 0) {
+		return (shell_func) qwerty;
+	}
+	if (gs_comp((char*)cmd, "halt") == 0) {
+		return (shell_func) halt;
+	}
+	return 0;
 }
-
+//NOOOO
 int invalid_command(int argc, char *argv[]) {
 	return 0;
 }

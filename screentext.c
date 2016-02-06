@@ -158,7 +158,30 @@ int console_print(char *s){
 	update_cursor();
 	return 1;
 }
+/*
+int console_printplace(char *s){
+	int needsupdate = 0;
+	for(; *s; s++){
+		screen_outbuffer[screen_outbuffery][screen_outbufferx] = *s;
+		if(*s != '\n')screen_outbufferx++;
+		if(screen_outbufferx >= vid_col || *s == '\n'){
+			screen_outbuffer[screen_outbuffery][screen_outbufferx] = 0;
+			screen_outbufferx = 0;
+			screen_outbuffery++;
+			screen_outbuffery = (screen_outbuffery %vid_lines);
+			needsupdate = 1;
+		}
 
+	}
+	screen_outbuffer[screen_outbuffery][screen_outbufferx] = 0;
+	if(needsupdate) console_screendraw();
+	else console_screendraw(); // todo
+	screen_cursory = vid_lines-1;
+	screen_cursorx = screen_outbufferx;
+	update_cursor();
+	return 1;
+}
+*/ //todo
 int console_writechar(char c){
 	char biddy[2] ={0};
 	biddy[0] = c;
