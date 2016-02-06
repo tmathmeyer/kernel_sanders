@@ -106,8 +106,7 @@ void kmain(void) {
         mm_free(mem2);
         mm_free(mem3);
         mm_free(mem4);
-        screentext_print("memory OK");
-        screentext_newline();
+        console_print("memory OK\n");
         sanders_printf("Welcome to Kernel Sanders, %s", VERSION_STRING);
     }
 

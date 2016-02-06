@@ -7,17 +7,14 @@ int print(const char *string) {
 	const char *head = string;
 	while(*head) {
 		switch (*head) {
-			case '\n':
-				screentext_newline();
-				break;
 			case '\b':
-				screentext_backspace();
+				// screentext_backspace();
 				break;
 			case '\r':
-				screentext_clear();
+				console_clear();
 				break;
 			default:
-				screentext_writechar(*head);
+				console_writechar(*head);
 		}
 		charc++;
 		head++;
@@ -35,14 +32,11 @@ int sanders_printf(char fmt[], ...) {
 	c = *fmt;
 	while (c) {
 		switch (c) {
-			case '\n':
-				screentext_newline();
-				break;
 			case '\b':
-				screentext_backspace();
+				// screentext_backspace();
 				break;
 			case '\r':
-				screentext_clear();
+				console_clear();
 				break;
 			case '%':
 				fmt++;
@@ -65,7 +59,7 @@ int sanders_printf(char fmt[], ...) {
 				}
 				break;
 			default:
-				screentext_writechar(c);
+				console_writechar(c);
 		}
 		if (c) {
 			fmt++;
