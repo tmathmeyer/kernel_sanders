@@ -11,6 +11,8 @@ int gs_ncomp(char *X, char *Y, size_t n) {
         if (*X - *Y) {
             return *X - *Y;
         }
+        ++X;
+        ++Y;
     }
     if (*X || *Y) {
         return *X - *Y;
