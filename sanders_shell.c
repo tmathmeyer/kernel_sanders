@@ -2,16 +2,16 @@
 #include "syscall.h"
 #include "goodstring.h"
 
-void shell_run(unsigned char *line) {
-	unsigned char *cmd;
-	unsigned char *args;
+void shell_run(char *line) {
+	char *cmd;
+	char *args;
 
 	int argc = 0;
 	shell_func func;
 
 	cmd = line;
 
-	unsigned char *head = line;
+	char *head = line;
 	while (*head != ' ' && *head) {
 		head++;
 	}
@@ -39,7 +39,7 @@ void shell_run(unsigned char *line) {
 	}
 
 	// Set argv
-	unsigned char *argv[argc];
+	char *argv[argc];
 	argc = 0;
 	// Set head back to start
 	head = args;
@@ -68,7 +68,7 @@ void shell_run(unsigned char *line) {
 }
 
 
-shell_func shell_command_lookup(unsigned char *cmd) {
+shell_func shell_command_lookup(char *cmd) {
 	if (gs_comp((char*)cmd, "dvorak") == 0) {
 		return (shell_func) dvorak;
 	}
@@ -78,6 +78,6 @@ shell_func shell_command_lookup(unsigned char *cmd) {
 	return invalid_command;
 }
 
-int invalid_command(int argc, unsigned char *argv[]) {
+int invalid_command(int argc, char *argv[]) {
 	return 0;
 }

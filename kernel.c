@@ -1,8 +1,8 @@
-#include "keyboard_map.h"
 #include "screentext.h"
 #include "alloc.h"
-#include "syscall.h"
 #include "sanders_shell.h"
+#include "syscall.h"
+#include "keyboard_map.h"
 
 #define KEYBOARD_DATA_PORT 0x60
 #define KEYBOARD_STATUS_PORT 0x64
@@ -59,8 +59,8 @@ void idt_init(void) {
 
 void kb_init(void) {
     write_port(0x21 , 0xFD); /* enable keyboard */
-    qwerty(0,0);
-    //dvorak(0,0);
+    qwerty((int)0,(char**)0);
+    //dvorak((int)0, (char**)0);
 }
 
 void keyboard_handler_main(void) {
@@ -79,7 +79,7 @@ void keyboard_handler_main(void) {
         if(keycode == ENTER_KEY_CODE) {
             screentext_newline();
             sandersindex = 0;
-            shell_run(sandersin);
+            shell_run((char*)sandersin);
             return;
         }
         if(keycode == BACKSPACE_KEY_CODE) {

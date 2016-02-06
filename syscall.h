@@ -5,12 +5,12 @@
 
 extern unsigned char* keyboard_map;
 
-int dvorak(int argc, char* argv[]) {
+static inline int dvorak(int argc, char* argv[]) {
     keyboard_map = dvorak_keyboard_map;
     return 0;
 }
 
-int qwerty(int argc, char* argv[]) {
+static inline int qwerty(int argc, char* argv[]) {
     keyboard_map = qwerty_keyboard_map;
     return 0;
 }
