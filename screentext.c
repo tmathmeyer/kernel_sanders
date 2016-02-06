@@ -14,7 +14,7 @@ int vid_bpc = 2;
 char * vidptr = (char*) 0xb8000;
 
 char * screen_outbuffer[25];
-char * screen_bigbuffer[250];
+char screen_bigbuffer[250];
 int screen_outbufferx = 0;
 int screen_outbuffery = 0;
 
