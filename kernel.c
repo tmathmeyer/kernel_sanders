@@ -1,5 +1,7 @@
 #include "keyboard_map.h"
 #include "alloc.h"
+#include "map.h"
+#include "kernel.h"
 
 #define LINES 25
 #define COLUMNS_IN_LINE 80
@@ -113,16 +115,11 @@ void kmain(void) {
         kprint("memory_checking");
         kprint_newline();
         char *mem = mm_alloc(256);
-        char *mem2 = mm_alloc(256);
-        mm_free(mem);
-        char *mem3 = mm_alloc(128);
-        char *mem4 = mm_alloc(256);
-        mm_free(mem2);
-        mm_free(mem3);
-        mm_free(mem4);
+        if (mem) {
+            kprint("memcheck OK");
+        }
         kprint("memory OK");
         kprint_newline();
     }
-
     while(1);
 }

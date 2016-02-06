@@ -1,275 +1,130 @@
 #include "alloc.h"
+#ifdef TESTING
+  #include <stdlib.h>
+  #include <stdio.h>
+#endif
 
+#define MEM_LO 0x8000000
+#define MEM_SIZE 0x1FF0
 
-//static vars:
-static void* free_list = NULL;
-
-void *mem_heap_lo() {
-    return (void *)0x8000000;
+void *mmebrk() {
+#ifdef TESTING
+    return malloc(MEM_SIZE);
+#else
+    return (void *)MEM_LO;
+#endif
 }
 
-void *mem_heap_hi() {
-    return (void *)0x28000000;
-}
+blockhdr *link = NULL;
 
-
-
-// split free memory so that it can be allocated
-void* break_memblock(void *ptr, size_t newsize) {
-    int old_free_size = EXTRACT_SIZE(GET_HEADER(ptr)); // get the old free size
-    int new_free_size = old_free_size - newsize - DOUBLE_HEADER;
-
-    SET_HEADER(ptr, new_free_size);
-    SET_FOOTER(ptr, new_free_size);
-
-    void* p = GET_NEXT_BLOCK(ptr);
-
-    // mark them as free (first bit)
-    SET_HEADER(p, (newsize|1));
-    SET_FOOTER(p, (newsize|1));
-
-    return p;
-}
-
-
-// move the start of the free lists to ptr
-void update_freelist_head(void* ptr) {
-    GET_NEXT(ptr) = free_list;
-    GET_PREV(ptr) = NULL;
-
-    if (free_list != NULL) {
-        GET_PREV(free_list) = ptr;
-    }
-
-    free_list = ptr;
-}
-
-
-// delete a node (`rm -rf / --no-preserve-root` it I mean)
-void delete(void* ptr) {
-    void *next = GET_NEXT(ptr);
-    void *prev = GET_PREV(ptr);
-
-    if (prev == NULL) {
-        free_list = next;
-        if (next != NULL) {
-            SET_PREV(next, NULL);
-        }
-    } else {
-        SET_NEXT(prev, next);
-        if (next != NULL) {
-            SET_PREV(next, prev);
-        }
-    }
-}
-
-
-
-
-// combine adjacent nodes if they are free
-// free software is the best
-void spread_glorious_GNU_freedom(void* ptr) {
-    size_t next_alloc = EXTRACT_FIELDS((char*)(GET_FOOTER(ptr)) + HEADER_SIZE); // the next allocated block's freedom level
-    size_t prev_alloc = EXTRACT_FIELDS((char*)(ptr) - DOUBLE_HEADER);           // the previous allocated block's freedom level
-    size_t size       = EXTRACT_SIZE(GET_HEADER(ptr));                          // the size of this block
-
-    // both sides are allocated *sigh
-    if (prev_alloc && next_alloc)
-    {
-        update_freelist_head(ptr);
-        return;
-    } 
-
-
-    // the next block is free! lets take it!
-    if (prev_alloc && !next_alloc)
-    {  
-        size += EXTRACT_SIZE(GET_HEADER(GET_NEXT_BLOCK(ptr))) + DOUBLE_HEADER;
-        delete(GET_NEXT_BLOCK(ptr));
-        SET_HEADER(ptr, size);
-        SET_FOOTER(ptr, size);
-
-        update_freelist_head(ptr);
-        return;
-    } 
-
-
-    // the previous block is free! lets take it!
-    if (!prev_alloc && next_alloc)
-    {
-        ptr = GET_PREVIOUS_BLOCK(ptr);
-        size += EXTRACT_SIZE(GET_HEADER(ptr)) + DOUBLE_HEADER;
-        SET_HEADER(ptr, size);
-        SET_FOOTER(ptr, size);
-        return;
-    } 
-
-
-
-    // all the blocks are free!
-    // this is tricky... take the previous block and expand it over this block
-    // and the next one.
-    void* prev = GET_PREVIOUS_BLOCK(ptr);
-    void* next = GET_NEXT_BLOCK(ptr);       
-    size += EXTRACT_SIZE(GET_HEADER(prev)) + DOUBLE_HEADER; // add size of previous block
-    size += EXTRACT_SIZE(GET_HEADER(next)) + DOUBLE_HEADER; // add size of next block
-    SET_HEADER(prev, size);
-    SET_FOOTER(prev, size); 
-    delete(next);
-}
-
-
-
-
-
-
-// init the memory manager:
-//   0 - there were no errors
-//  -1 - your *fake* kernel hates you
 int mm_init(void) {
-    void* heap_bottom = mem_heap_lo();
-    free_list = NULL;
-
-    REREFERENCE(heap_bottom, 1);
-    REREFERENCE(heap_bottom + HEADER_SIZE, 1);
-
-    return 0;
+    void *mem_low = mmebrk();
+    blockhdr *lowloc = (blockhdr *)mem_low;
+    lowloc->nxpr = MEM_SIZE - sizeof(struct header);
+    lowloc->free = 1;
+    lowloc->frst = 1;
+    lowloc->last = 1;
+    link = lowloc;
+    
+    blockhdr *highloc = (blockhdr *)(mem_low + MEM_SIZE - sizeof(struct header));
+    highloc->nxpr = MEM_SIZE - sizeof(struct header);
+    highloc->free = 1;
+    highloc->frst = 1;
+    highloc->last = 1;
 }
 
+void split_block(blockhdr *block, size_t size) {
+    blockhdr *newtail = ((void *)block) + (size + sizeof(struct header));
+    blockhdr *nexthead = ((void *)block) + (size + 2*sizeof(struct header));
+    blockhdr *last = ((void *)block) + (block->nxpr);
 
+    size_t sblock_size = block->nxpr - size - 2*sizeof(struct header);
+    newtail->free = 1;
+    nexthead->free = 1;
+    newtail->nxpr = block->nxpr = size + sizeof(struct header);
+    last->nxpr = nexthead->nxpr = sblock_size;
 
+    nexthead->last = block->last;
+    block->last = 0;
+    nexthead->frst = 0;
+}
 
-
-
-void* mm_alloc(size_t size) {  
+void* mm_alloc(size_t size) {
     if (size <= 0) {
         return NULL;
     }
-
-    void *temp_list            = free_list;
-    unsigned int limit_loops   = 0;
-    unsigned int alloc_size    = (size>MIN_ALLOC_SIZE)?
-        ALIGN(size):
-        MIN_ALLOC_SIZE;
-
-
-    // search free list for first free block for size newsize
-    while (temp_list != NULL &&   (limit_loops++ < MAX_NUM_LOOPS))
-    {
-        // the size of the first free chunk of memory
-        unsigned int free_size = EXTRACT_SIZE(GET_HEADER(temp_list));
-
-        // this node has enough space
-        if (free_size >= alloc_size)
-        {
-            // there's so much room, we can add a new tail/header
-            // and it will still fit within the free space
-            if (free_size >= alloc_size + 32)
-            {
-                return break_memblock(temp_list, alloc_size); 
-            }
-
-            // uugh, guess we have to convert our whole space to an occupied node
-            // unlink it from the list, and then return the new spot
-            delete(temp_list);
-            SET_HEADER(temp_list, (free_size|1));
-            SET_FOOTER(temp_list, (free_size|1));
-
-            return temp_list;
-        }
-        else
-        {
-            temp_list = GET_NEXT(temp_list);
-        }
+    
+    if (size%8) {
+        size = ((size>>3)+1)<<3;
     }
-    return NULL;
+    
+    blockhdr *tmp = link;
+    while(!tmp->free && tmp->nxpr >= size + sizeof(struct header)) {
+        tmp = (blockhdr *)(((void *)tmp) + tmp->nxpr + sizeof(struct header));
+    }
+    
+    split_block(tmp, size);
+    tmp->free = 0;
+    return ((void *)tmp) + sizeof(struct header);
 }
 
+void mergeblocks(blockhdr *data, blockhdr *next) {
+    data->last = next->last;
+    data->nxpr = (data->nxpr + next->nxpr + sizeof(struct header));
+    blockhdr *last = ((void *)next) + next->nxpr;
+    last->nxpr = data->nxpr;
+    last->frst = data->frst;
+}
 
-
-
-// free the memory
 void mm_free(void* ptr) {
-    // you cant free that!
-    if(ptr == 0) {
-        return;
+    blockhdr *data = ptr-sizeof(struct header);
+    data->free = 1;
+    if (!data->last) {
+        blockhdr *next = ((void *)data) + data->nxpr + sizeof(struct header);
+        if (next->free) {
+            mergeblocks(data, next);
+        }
     }
-
-
-    size_t size = EXTRACT_SIZE(GET_HEADER(ptr));
-
-    SET_HEADER(ptr, size);
-    SET_FOOTER(ptr, size);
-
-    if(free_list != NULL)
-    {
-        // add our new freedom to all of our old freedoms
-        // then worship stallman
-        spread_glorious_GNU_freedom(ptr);
-    }
-    else
-    {
-        // make this our first freedom
-        // then worship stallman
-        update_freelist_head(ptr);
+    if (!data->frst) {
+        blockhdr *prev = ((void *)data) - sizeof(struct header);
+        if (prev->free) {
+            prev = ((void *)prev) - prev->nxpr;
+            mergeblocks(prev, data);
+        }
     }
 }
 
-size_t mm_copy(void *new, void *old, size_t bytes) {
-    char *n = (char *)new;
-    char *o = (char *)old;
-    while(bytes --> 0) {
-        n[bytes] = o[bytes];
+void blockcheck() {
+#ifdef TESTING
+    blockhdr *tmp = link;
+    while(1) {
+        printf("block @ %i\n", tmp);
+        printf("     size: %i\n", tmp->nxpr - sizeof(struct header));
+        printf("     free: %s\n", tmp->free?"free":"allocated");
+        printf("     last: %s\n", tmp->last?"last":"no");
+        printf("     frst: %s\n", tmp->frst?"frst":"no");
+        if (!tmp->last) {
+            tmp = ((void *)tmp) + tmp->nxpr + sizeof(struct header);
+        } else {
+            goto done;
+        }
     }
-    return bytes;
+done:
+    puts("");
+#endif
 }
 
-// expand memory
-void* mm_realloc(void* ptr, size_t size)
-{
-    // they want to delete their memory??
-    // they should have used free, so we'll do it
-    // for them... FOR NARNIA
-    if (!size)
-    {
-        mm_free(ptr);
-        return 0;
+void* mm_zalloc(size_t size) {
+    void *mem = mm_alloc(size);
+    if (!mem) {
+        return mem;
     }
-
-    // they never had anything there before... 
-    // just call malloc (which they should have done anyways)
-    if (ptr == NULL)
-    {
-        return mm_alloc(size);
+    while(size --> 0) {
+        ((char *)mem)[size] = 0;
     }
-
-    // attempt to get new memory
-    // obviously there is a better way to do this
-    // but I'm REALLY tired ( and I discussed that way in my readme )
-    void* newptr = mm_alloc(size);
-
-    // the new malloc fails! oh well, we should probably tell they used they failed...
-    // their old pointer will work, but the new one will be borked
-    if (!newptr)
-    {
-        return 0;
-    }
-
-    // Copy the old data
-    size_t oldsize = EXTRACT_SIZE(GET_HEADER(ptr));
-
-    // they want less memory than they do now.....
-    // weirdos
-    if (size < oldsize)
-    {
-        oldsize = size;
-    }
-
-    // copy their data (yeah this is the slow part)
-    mm_copy(newptr, ptr, oldsize);
-
-    // free the old memory
-    mm_free(ptr);
-
-    return newptr;
+    return mem;
 }
+
+size_t mm_copy(void *new, void *old, size_t bytes);
+
+void* mm_realloc(void* ptr, size_t size);
