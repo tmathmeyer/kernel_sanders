@@ -55,3 +55,7 @@ void video_draw_line(unsigned int color, int sx, int sy, int ex, int ey){
 		}
 	}
 }
+
+
+void video_draw_triangle(unsigned int color, int *verts){
+}
