@@ -1,7 +1,7 @@
 #ifndef __keyboard_map_h__
 #define __keyboard_map_h__
 
-unsigned char qwerty_keyboard_map[128] =
+static unsigned char qwerty_keyboard_map[128] =
 {
     0,  27, '1', '2', '3', '4', '5', '6', '7', '8',	/* 9 */
   '9', '0', '-', '=', '\b',	/* Backspace */
@@ -41,7 +41,7 @@ unsigned char qwerty_keyboard_map[128] =
     0,	/* All other keys are undefined */
 };
 
-unsigned char dvorak_keyboard_map[128] =
+static unsigned char dvorak_keyboard_map[128] =
 {
     0,  27, '1', '2', '3', '4', '5', '6', '7', '8', /* 9 */
   '9', '0', '[', ']', '\b', /* Backspace */
