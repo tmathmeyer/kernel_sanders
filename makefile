@@ -2,15 +2,14 @@ CC = gcc -fno-stack-protector -m32 -c
 
 CFLAGS = -Wall
 
-OBJECTS = kernel.o stringlib.o font.o
+OBJECTS = $(wildcard *.c)
 
-
-all: $(OBJECTS)
+all: $(OBJECTS:.c=.o)
 	nasm -f elf32 kernel.asm -o kasm.o
-	ld -m elf_i386 -T link.ld -o kernel kasm.o kernel.o stringlib.o
+	ld -m elf_i386 -T link.ld -o kernel kasm.o $(OBJECTS:.c=.o)
 
 %.o: %.c
-	$(CC) $(CFLAGS) -o $(notdir $@) $<
+	$(CC) $(CFLAGS) -o $@ $<
 
 run: all
 	qemu-system-i386 -kernel kernel
