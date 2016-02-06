@@ -1,15 +1,17 @@
 #include "map.h"
 #include "alloc.h"
 #include "goodstring.h"
-#include "kernel.h"
+#include "sandersio.h"
+#include "screentext.h"
 
 struct map *map_init(unsigned int size) {
     struct map *result = mm_zalloc(sizeof(struct map));
-    result->body = mm_zalloc(sizeof(struct kvp**) * size);
+    void *temp = mm_zalloc(sizeof(struct kvp**) * size);
     result->size = size;
-    if (result->body) {
-        kprint("body good");
+    if (temp == 0) {
+        sanders_printf("body not allocated properly\n");
     }
+    result->body = temp;
     
     return result;
 }

@@ -1,6 +1,7 @@
 #include "keyboard_map.h"
 #include "screentext.h"
 #include "alloc.h"
+#include "map.h"
 #include "syscall.h"
 #include "sandersio.h"
 
@@ -97,19 +98,18 @@ void kmain(void) {
     console_init();
     console_clear();
     if (!mm_init()) {
-        console_print("memory_checking\n");
+        sanders_print("memory_checking\n");
         char *mem = mm_alloc(256);
         if (mem) {
-            mm_copy(mem, "fuck", 5);
-            char *mem2 = mm_alloc(256);
-            mm_free(mem);
-            char *mem3 = mm_alloc(128);
-            char *mem4 = mm_alloc(256);
-            mm_free(mem2);
-            mm_free(mem3);
-            mm_free(mem4);
-            console_print("memory OK\n");
-            sanders_printf("Welcome to Kernel Sanders, %s", VERSION_STRING);
+            sanders_print("memory OK\n");
+
+            dmap *map = map_new();
+            mm_copy(mem, "map is working\n", 16);
+            map_put(map, "test", mem);
+            char *c = (char *)map_get(map, "test");
+            sanders_print(c);
+            
+            sanders_printf("Welcome to Kernel Sanders, %s\n\n\n\n", VERSION_STRING);
         }
     }
     while(1);

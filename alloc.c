@@ -1,11 +1,14 @@
 #include "alloc.h"
+#include "sandersio.h"
+#include "screentext.h"
+
 #ifdef TESTING
   #include <stdlib.h>
   #include <stdio.h>
 #endif
 
-#define MEM_LO 0x8000000
-#define MEM_SIZE 0x1FF0
+#define MEM_LO 0x0
+#define MEM_SIZE 0x1FFFFFF0
 
 void *mmebrk() {
 #ifdef TESTING
@@ -117,18 +120,21 @@ done:
 
 void* mm_zalloc(size_t size) {
     void *mem = mm_alloc(size);
-    if (!mem) {
+    if (mem == 0) {
         return mem;
     }
-    while(size --> 0) {
-        ((char *)mem)[size] = 0;
+    char *c = (char *)mem;
+    for(int i=0;i<size;i++) {
+        c[i] = 0;
     }
     return mem;
 }
 
 size_t mm_copy(void *new, void *old, size_t bytes) {
-    while(bytes --> 0) {
-        ((char *)new)[bytes] = ((char *)old)[bytes];
+    char *n = (char *)new;
+    char *o = (char *)old;
+    for(int i=0;i<bytes;i++) {
+        *(n++) = *(o++);
     }
     return 0;
 }
