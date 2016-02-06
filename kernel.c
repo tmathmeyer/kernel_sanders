@@ -83,12 +83,13 @@ void keyboard_handler_main(void) {
 
         if(keycode == ENTER_KEY_CODE) {
             console_print("\n");
+            sandersin[sandersindex] = 0;
             sandersindex = 0;
             shell_run((char*)sandersin);
             return;
         }
         if(keycode == BACKSPACE_KEY_CODE) {
-            screentext_backspace();
+            //screentext_backspace();
             sandersin[sandersindex--] = 0;
             return;
         }
