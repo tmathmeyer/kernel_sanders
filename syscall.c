@@ -6,6 +6,8 @@
 #include "goodstring.h"
 #include "screentext.h"
 #include "sandersboard.h"
+#include "halt.h"
+#include "screentext.h"
 
 int dvorak(int argc, char* argv[]) {
     keyboard_map = dvorak_keyboard_map;
@@ -32,9 +34,11 @@ int ls(int argc, char *argv[]) {
             if (file->type == FUNCTION) {
                 sanders_printf("executable");
             }
-            if (file->type == _FILE) {
+            else if (file->type == _FILE) {
                 sanders_printf("file");
-            }
+            } else {
+		sanders_printf("%i %i", file->type, gs_len(name));
+	    }
             sanders_printf("\n");
         }
     }
@@ -84,4 +88,16 @@ void *execute(void *exe) {
     return NULL;
 }
 
-
+int sanders_exit(int argc, char* argv[]) {
+	screentext_clear();
+	screentext_writecharplace('G', 16, 4);
+	screentext_writecharplace('o', 17, 4);
+	screentext_writecharplace('o', 18, 4);
+	screentext_writecharplace('d', 19, 4);
+	screentext_writecharplace('b', 20, 4);
+	screentext_writecharplace('y', 21, 4);
+	screentext_writecharplace('e', 22, 4);
+	screentext_writecharplace('!', 23, 4);
+    halt();
+    return 0;
+}

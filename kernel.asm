@@ -11,6 +11,9 @@ global keyboard_handler
 global read_port
 global write_port
 global load_idt
+global video_mode
+global text_mode
+global get_mode
 
 extern kmain 		;this is defined in the c file
 extern keyboard_handler_main
@@ -33,11 +36,39 @@ load_idt:
 	sti 				;turn on interrupts
 	ret
 
+get_protected:
+;	cli          ; disable interrupts
+;	lgdt [gdtr]  ; load GDT register with start address of Global Descriptor Table
+;	mov eax, cr0
+;	or al, 1     ; set PE (Protection Enable) bit in CR0 (Control Register 0)
+;	mov cr0, eax
+;	; Perform far jump to selector 08h (offset into GDT, pointing at a 32bit PM code segment descriptor)
+;	; to load CS with proper PM32 descriptor)
+;
+;	JMP 08h:realstart
+;	ret
 keyboard_handler:
 	call    keyboard_handler_main
 	iretd
 
+video_mode:
+	mov ah, 0x00
+	mov al, 0x13
+	int 0x10
+	ret
+text_mode:
+	mov ah, 0x00
+	mov al, 0x3
+	int 0x10
+	ret
+get_mode:
+	mov ah, 0x0F
+;	mov eax, 0x0
+	int 0x10
+	ret
 start:
+;	call get_protected
+realstart:
 	cli 				;block interrupts
 	mov esp, stack_space
 	call kmain
