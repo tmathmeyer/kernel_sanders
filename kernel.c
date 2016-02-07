@@ -107,6 +107,7 @@ void kmain(void) {
         console_print("Welcome to Kernel Sanders\n\n\n\n");
         set_default_keyboard_handler(&shell_keyboard_handler);
         console_print("> ");
+        sanderssweeper(0, 0);
         while(1);
     }
 }
