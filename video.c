@@ -1,5 +1,6 @@
 #include "alloc.h"
 #include "video.h"
+#include "boopt.h"
 // LOTS OF TODO HERE
 
 unsigned int * vid_buffer;
@@ -148,3 +149,6 @@ void video_draw_triangle(unsigned int color, ivec_t *verts, void * tridata){
 		}
 	}
 }
+
+
+

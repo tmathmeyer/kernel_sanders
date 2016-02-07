@@ -22,7 +22,6 @@ extern void keyboard_handler(void);
 extern char read_port(unsigned short port);
 extern void write_port(unsigned short port, unsigned char data);
 extern void load_idt(unsigned long *idt_ptr);
-
 unsigned char sandersin[255];
 unsigned char sandersindex = 0;
 dmap *syscall_map;
