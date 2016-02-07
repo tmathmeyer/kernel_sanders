@@ -46,7 +46,9 @@ int sanders_printf(char fmt[], ...) {
 						char *temp;
 						switch(c) {
 							case 'd':
-								temp = itoa(*arg);
+							case 'i':
+							case 'p':
+								temp = itoa((int) *arg);
 								sanders_print(temp);
 								mm_free(temp);
 								break;

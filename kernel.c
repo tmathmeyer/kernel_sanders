@@ -5,6 +5,7 @@
 #include "syscall.h"
 #include "keyboard_map.h"
 #include "sandersio.h"
+#include "stringlib.h"
 
 #define KEYBOARD_DATA_PORT 0x60
 #define KEYBOARD_STATUS_PORT 0x64
@@ -24,6 +25,7 @@ extern void load_idt(unsigned long *idt_ptr);
 
 unsigned char sandersin[255];
 unsigned char sandersindex = 0;
+dmap *syscall_map;
 
 struct IDT_entry {
     unsigned short int offset_lowerbits;
@@ -100,26 +102,56 @@ void keyboard_handler_main(void) {
 }
 
 
+int systemcheck() {
+    if (mm_init()) { // mm_init has failed
+        return 0;
+    }
+    sanders_print("initializing system check...\n");
+
+    sanders_print("    memory... ");
+    char *mem = mm_alloc(256);
+    if (mem) {
+        sanders_print("OK\n");
+    } else {
+        return 0;
+    }
+
+    sanders_print("    hashmaps... ");
+    dmap *map = map_new();
+    if (!map) {
+        return 0;
+    }
+    mm_copy(mem, "OK\n", 4);
+    map_put(map, "test", mem);
+    char *c = (char *)map_get(map, "test");
+    if (c == mem) {
+        sanders_print(c);
+    } else {
+        return 0;
+    }
+
+    sanders_print("completed system check\n");
+    return 1;
+}
+
+void *__syscall(char *c) {
+    return map_get(syscall_map, c);
+}
+
+
 void kmain(void) {
     screentext_clear();
     idt_init();
     kb_init();
     console_init();
     console_clear();
-    if (!mm_init()) {
-        sanders_print("memory_checking\n");
-        char *mem = mm_alloc(256);
-        if (mem) {
-            sanders_print("memory OK\n");
-
-            dmap *map = map_new();
-            mm_copy(mem, "map is working\n", 16);
-            map_put(map, "test", mem);
-            char *c = (char *)map_get(map, "test");
-            sanders_print(c);
-            
-            sanders_printf("Welcome to Kernel Sanders, %s\n\n\n\n", VERSION_STRING);
-        }
+    if (systemcheck()) {
+        syscall_map = map_new();
+            map_put(syscall_map, "dvorak", dvorak);
+            map_put(syscall_map, "h.soav", dvorak);
+            map_put(syscall_map, "qwerty", qwerty);
+            map_put(syscall_map, "',.pyf", qwerty);
+        sanders_printf("Welcome to Kernel Sanders, %s\n\n\n\n", VERSION_STRING);
+        while(1);
     }
-    while(1);
 }
