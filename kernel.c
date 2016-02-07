@@ -41,6 +41,8 @@ void *execute(char *exe) {
     SYSTEM(ls);
     SYSTEM(si);
     SYSTEM(sanders_sweeper);
+    SYSTEM(communism);
+    SYSTEM(the_iowa_caucus);
     return NULL;
 }
 

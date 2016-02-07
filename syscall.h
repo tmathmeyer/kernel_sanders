@@ -13,6 +13,8 @@ int si(int argc, char *argv[]);
 int sanders_exit(int argc, char* argv[]);
 int sanders_sweeper(int argc, char* argv[]);
 int communism(int argc, char* argv[]);
+int the_iowa_caucus(int argc, char *argv[]);
+
 
 void *execute(char *exe);
 

@@ -10,7 +10,6 @@
 int vid_x;
 int vid_y;
 
-
 #define PRECISION_TYPE float
 PRECISION_TYPE hollyConstant = 0.017453292519943295769236907684886;
 
@@ -78,8 +77,6 @@ PRECISION_TYPE F_sin ( PRECISION_TYPE x )
     return result;
 }
 
-
-
 extern char * vidmem;
 
 inline int abs(int x) {
@@ -88,7 +85,6 @@ inline int abs(int x) {
     }
     return 0-x;
 }
-
 
 
 //no bounds checks
