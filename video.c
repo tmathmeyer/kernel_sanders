@@ -5,13 +5,13 @@
 #include "boopt.h"
 #include "sleep.h"
 #include "matrixlib.h"
-// LOTS OF TODO HERE
+#include "mathlib.h"
 
 int vid_x;
 int vid_y;
 
 
-#define PRECISION_TYPE        double
+#define PRECISION_TYPE float
 PRECISION_TYPE hollyConstant = 0.017453292519943295769236907684886;
 
 PRECISION_TYPE sinTable[] = {
@@ -63,7 +63,6 @@ inline int abs(int x) {
     return 0-x;
 }
 
-#define M_PI 3.1415926535
 
 
 //no bounds checks
