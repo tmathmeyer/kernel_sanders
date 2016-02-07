@@ -28,7 +28,7 @@ int sanders_printf(const char fmt[], ...) {
 				c = *fmt;
 				if (arg) {
 					if (c) {
-						char *temp = mm_alloc(MAX_ITOA_STR);
+						char temp[MAX_ITOA_STR];
 						switch(c) {
 							case 'd':
 							case 'i':
@@ -44,7 +44,6 @@ int sanders_printf(const char fmt[], ...) {
 								chars++;
 								break;
 						}
-						mm_free(temp);
 						arg++;
 					}
 				}
@@ -86,7 +85,7 @@ int sanders_sprintf(char *str, const char fmt[], ...) {
 				if (arg) {
 					if (c) {
 						int temp_c;
-						char *temp = mm_alloc(MAX_ITOA_STR);
+						char temp[MAX_ITOA_STR];
 						switch(c) {
 							case 'd':
 							case 'i':
@@ -107,7 +106,6 @@ int sanders_sprintf(char *str, const char fmt[], ...) {
 								chars++;
 								break;
 						}
-						mm_free(temp);
 						arg++;
 					}
 				}
@@ -144,7 +142,7 @@ int sanders_snprintf(char *str, const int n, const char fmt[], ...) {
 				if (arg) {
 					if (c) {
 						int chars;
-						char *temp = mm_alloc(MAX_ITOA_STR);
+						char temp[MAX_ITOA_STR];
 						switch(c) {
 							case 'd':
 							case 'i':
@@ -165,7 +163,6 @@ int sanders_snprintf(char *str, const int n, const char fmt[], ...) {
 								head++;
 								break;
 						}
-						mm_free(temp);
 						arg++;
 					}
 				}
