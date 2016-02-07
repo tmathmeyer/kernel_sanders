@@ -141,6 +141,9 @@ int atoi(const char *a) {
 }
 
 char *itoa(const int i) {
+	if (i == 0) {
+		return "0";
+	}
 	int charc = 0;
 	int temp = 1;
 	int abs_i = i < 0 ? -i : i;
@@ -169,4 +172,3 @@ char *itoa(const int i) {
 
 	return a;
 }
-
