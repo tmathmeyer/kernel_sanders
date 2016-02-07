@@ -3,6 +3,45 @@
 #include "syscall.h"
 #include "goodstring.h"
 #include "halt.h"
+#include "sandersboard.h"
+
+void shell_keyboard_handler(char keycode) {
+	if(keycode < 0)
+        return;
+
+    if(keycode == ENTER_KEY_CODE) {
+        // console_print("\n");
+        sanders_printf("%c", '\n');
+        sandersin[sandersindex] = 0;
+        sandersindex = 0;
+        shell_run((char*)sandersin);
+        return;
+    }
+    if(keycode == BACKSPACE_KEY_CODE) {
+        if (sandersindex > 0) {
+            sandersin[sandersindex--] = 0;
+            // console_writechar('\b');
+            sanders_printf("%c", '\b');
+        }
+        return;
+    }
+    
+    if (key_status[CTRL_KEY_CODE] == 1) {
+  		if (keyboard_map[(unsigned char) keycode] == 'c') {
+    		// sanders_printf("Caught ctrl+c\n");
+    		// Do something
+    	}
+    	if (keyboard_map[(unsigned char) keycode] == 'z') {
+    		// sanders_printf("Caught ctrl+z\n");
+    		// Do something else
+    	}
+    	return;
+    }
+    // console_writechar(keyboard_map[(unsigned char) keycode]);
+    // sanders_printf("WHAT?");
+    sanders_printf("%c", keyboard_map[(unsigned char) keycode]);
+    sandersin[sandersindex++] = keyboard_map[(unsigned char) keycode];
+}
 
 void shell_run(char *line) {
 	char *cmd;
