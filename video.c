@@ -44,14 +44,17 @@ PRECISION_TYPE cosTable[] = {
 // i.e. lets a+b = 18.22
 // then a = 10, b = 8.22
 
-PRECISION_TYPE F_sin ( PRECISION_TYPE angle )
+PRECISION_TYPE F_sin ( PRECISION_TYPE x )
 {
-	int a = angle * 0.1f;
-	PRECISION_TYPE b = angle - 10 * a;
-    while (a < 0) {
-        a ++;
+    float res=0, pow=x, fact=1;
+    for(int i=0; i<5; ++i)
+    {
+        res+=pow/fact;
+        pow*=x*x;
+        fact*=(2*(i+1))*(2*(i+1)+1);
     }
-	return sinTable[a] * cosTable[(int)(b)] + b * hollyConstant * sinTable[9-a];
+
+    return res;
 }
 
 
