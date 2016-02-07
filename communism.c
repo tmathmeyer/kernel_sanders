@@ -1,6 +1,4 @@
 #include "communism.h"
-
-
 #include "alloc.h"
 #include "sandersboard.h"
 #include "syscall.h"

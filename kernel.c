@@ -9,6 +9,7 @@
 #include "sandersboard.h"
 #include "screentext.h"
 #include "goodstring.h"
+#include "bs.h"
 
 
 #define IDT_SIZE 256
@@ -42,6 +43,7 @@ void *execute(char *exe) {
     SYSTEM(si);
     SYSTEM(sanders_sweeper);
     SYSTEM(communism);
+    SYSTEM(bs);
     SYSTEM(the_iowa_caucus);
     return NULL;
 }
@@ -107,6 +109,10 @@ int systemcheck() {
     return 1;
 }
 
+void init_keyboard() {
+    set_default_keyboard_handler(&shell_keyboard_handler);
+}
+
 void kmain(void) {
     screentext_clear();
     idt_init();
@@ -115,8 +121,8 @@ void kmain(void) {
     console_clear();
 	int i = 2;
     if (systemcheck()) {
+        init_keyboard();
         console_print("Welcome to Kernel Sanders\n\n\n\n");
-        set_default_keyboard_handler(&shell_keyboard_handler);
         console_print("> ");
         while(1);
     }
