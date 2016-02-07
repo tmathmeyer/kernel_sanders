@@ -520,6 +520,12 @@ void communism_keyboard_handler(char keycode) {
     		move_piece(1, 2);
     		return;
 
+    	case ' ':
+    		rotate_piece(1);
+    		rotate_piece(2);
+    		rotate_piece(3);
+    		return;
+
     }
 }
 
