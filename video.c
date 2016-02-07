@@ -48,7 +48,9 @@ PRECISION_TYPE F_sin ( PRECISION_TYPE angle )
 {
 	int a = angle * 0.1f;
 	PRECISION_TYPE b = angle - 10 * a;
-
+    while (a < 0) {
+        a ++;
+    }
 	return sinTable[a] * cosTable[(int)(b)] + b * hollyConstant * sinTable[9-a];
 }
 
