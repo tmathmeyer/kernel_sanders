@@ -121,6 +121,7 @@ void kmain(void) {
         sanders_printf("Welcome to Kernel Sanders, %s\n\n\n\n", VERSION_STRING);
         set_default_keyboard_handler(&shell_keyboard_handler);
         sanders_print("> ");
+        // sanders_sweeper(0, (char **)0);
         while(1);
     }
 }
