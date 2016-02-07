@@ -2,7 +2,9 @@
 #define SANDERSIO_HEADER
 
 int sanders_print(const char *string);
-
-int sanders_printf(char fmt[], ...);
+int sanders_printf(const char fmt[], ...);
+int sanders_nprintf(const int n, const char fmt[], ...);
+int sanders_sprintf(char *str, const char fmt[], ...);
+int sanders_snprintf(char *str, const int n, const char fmt[], ...);
 
 #endif // SANDERSIO_HEADER
