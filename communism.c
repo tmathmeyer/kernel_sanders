@@ -26,14 +26,14 @@ void communism_draw_cell(int x, int y, unsigned char c) {
 	int i, j;
 	for (j = 1; j < CELL_SIZE-1; j++) {
 		for (i = 1; i < CELL_SIZE-1; i++) {
-			*(vidmem + x + i + 320* (j + y)) = c;
+			*(vidmem + x + i + 320* (j + y) + 115) = c;
 		}
 	}
 	for (i = 0; i < CELL_SIZE; i++) {
-		*(vidmem + x + i + 320* y) = 2;
-		*(vidmem + x + i + 320* (CELL_SIZE + y)) = 2;
-		*(vidmem + x + 320* (i + y)) = 2;
-		*(vidmem + x + CELL_SIZE + 320* (i + y)) = 2;
+		*(vidmem + x + i + 320* y + 115) = 2;
+		*(vidmem + x + i + 320* (CELL_SIZE + y) + 115) = 2;
+		*(vidmem + x + 320* (i + y) + 115) = 2;
+		*(vidmem + x + CELL_SIZE + 320* (i + y) + 115) = 2;
 	}
 }
 
@@ -314,13 +314,15 @@ void communism_keyboard_handler(char keycode) {
     	case RIGHT_KEY_CODE:
     		move_piece(1);
     		return;
+    	case ENTER_KEY_CODE:
+    		drop_piece();
     }
 
     int ascii_key = keyboard_map[(unsigned char) keycode];
 
     switch(ascii_key) {
     	case ' ':
-    		drop_piece();
+    		rotate_piece();
     		return;
     }
 }
