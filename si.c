@@ -37,3 +37,16 @@ void si_closefile(void) {
     fclose(status.filename);
     mm_free(status.buffer);
 }
+
+void si_run(void) {
+    while(1) {
+        switch(status.mode) {
+            case INSERT:
+            
+            break;
+            case EXECUTE:
+            
+            break;
+        }
+    }
+}
