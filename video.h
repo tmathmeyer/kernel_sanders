@@ -13,7 +13,7 @@ typedef ivec_t ivec4_t[4];
 
 typedef struct texture_s {
 	ivec2_t res;
-	unsigned int * data;
+	unsigned char * data;
 } texture_t;
 
 

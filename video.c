@@ -4,7 +4,7 @@
 #include "boopt.h"
 // LOTS OF TODO HERE
 
-unsigned int * vid_buffer;
+unsigned char * vid_buffer;
 int vid_x;
 int vid_y;
 
@@ -18,10 +18,10 @@ static inline float float_abs(float in){
 
 
 //no bounds checks
-void video_fill_rect(unsigned int color, int mx, int my, int lx, int ly){
+void video_fill_rect(unsigned char color, int mx, int my, int lx, int ly){
 	int y, x;
 	for(y = my; y < ly; y++){
-		unsigned int * line = vid_buffer + y * vid_x;
+		unsigned char * line = vid_buffer + y * vid_x;
 		for(x = mx; x < lx; x++){
 			line[x] = color;
 		}
@@ -30,15 +30,15 @@ void video_fill_rect(unsigned int color, int mx, int my, int lx, int ly){
 void video_fill_texture(texture_t t, int mx, int my, int lx, int ly){
 	int y, x, tx, ty;
 	for(ty = 0, y = my; y < ly; y++, ty++){
-		unsigned int * line = vid_buffer + y * vid_x;
-		unsigned int * tline = t.data + ty * t.res[0];
+		unsigned char * line = vid_buffer + y * vid_x;
+		unsigned char * tline = t.data + ty * t.res[0];
 		for(tx = 0, x = mx; x < lx; x++, tx++){
 			line[x] = tline[tx];
 		}
 	}
 }
 
-void video_draw_line(unsigned int color, int sx, int sy, int ex, int ey){
+void video_draw_line(unsigned char color, int sx, int sy, int ex, int ey){
 	if(sy > ey){
 		int t = sy;
 		sy = ey;
@@ -154,7 +154,22 @@ void video_draw_triangle(unsigned int color, ivec_t *verts, void * tridata){
 extern void video_mode(void);
 extern void text_mode(void);
 extern int get_mode(void);
+extern int init_vga(int blah);
 void video_fuck(void){
+	init_vga(0);
+	unsigned char * vidmem = (unsigned char *)0xa0000;
+	vid_buffer = vidmem;
+	vid_x = 320;
+	vid_y = 200;
+	int i;
+	/*
+	for(i = 0; i < 320 * 200; i++){
+		vidmem[i] = (i*123) % 255;
+	}*/
+	for(i = 50; i < 200; i++){
+		video_draw_line(i, i, 0, 320 - i, 200);
+	}
+	video_fill_rect(12, 50, 50, 100, 100);
 //	sanders_printf("video mode is %i\n", get_mode());
 //	video_mode();
 //	text_mode();
