@@ -1,0 +1,28 @@
+#ifndef COMMUNISM_HEADER
+#define COMMUNISM_HEADER
+/*
+#define SSWEEPER_DEFAULT_WIDTH 16
+#define SSWEEPER_DEFAULT_HEIGHT 12
+#define SSWEEPER_MIN_WIDTH 8
+#define SSWEEPER_MIN_HEIGHT 8
+#define SSWEEPER_MAX_WIDTH 48
+#define SSWEEPER_MAX_HEIGHT 20
+#define SSWEEPER_DEFAULT_MINES 32
+#define SSWEEPER_DEFAULT_WIDTH 320
+#define SSWEEPER_DEFAULT_HEIGHT 200
+#define SSWEEPER_DEFAULT_MINES 12000
+
+
+#define SSWEEPER_MINE '*'
+*/
+
+#define COMMUNISM_WIDTH 10
+#define COMMUNISM_HEIGHT 22
+
+#define CELL_SIZE 8
+
+void communism_keyboard_handler(char keycode);
+
+int communism_exit();
+
+#endif // COMMUNISM_HEADER

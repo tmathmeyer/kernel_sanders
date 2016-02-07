@@ -18,7 +18,7 @@ int player_pos_y;
 
 unsigned char player_prev;
 
-unsigned char * vidmem = (unsigned char *)0xa0000;
+extern unsigned char * vidmem;
 
 void draw_cell(int x, int y, char c) {
 	int cell_index = x + y * 320;
