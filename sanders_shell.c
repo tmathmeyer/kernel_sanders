@@ -5,6 +5,7 @@
 #include "halt.h"
 #include "video.h"
 #include "sfs.h"
+#include "screentext.h"
 #include "sandersboard.h"
 
 void shell_keyboard_handler(char keycode) {
@@ -12,8 +13,7 @@ void shell_keyboard_handler(char keycode) {
         return;
 
     if(keycode == ENTER_KEY_CODE) {
-        // console_print("\n");
-        sanders_printf("%c", '\n');
+        console_print("\n");
         sandersin[sandersindex] = 0;
         sandersindex = 0;
         shell_run((char*)sandersin);
@@ -22,25 +22,21 @@ void shell_keyboard_handler(char keycode) {
     if(keycode == BACKSPACE_KEY_CODE) {
         if (sandersindex > 0) {
             sandersin[sandersindex--] = 0;
-            // console_writechar('\b');
-            sanders_printf("%c", '\b');
+            console_print("\b");
         }
         return;
     }
     
     if (key_status[CTRL_KEY_CODE] == 1) {
   		if (keyboard_map[(unsigned char) keycode] == 'c') {
-    		// sanders_printf("Caught ctrl+c\n");
-    		// Do something
+    		// Caught ctrl+c\n
     	}
     	if (keyboard_map[(unsigned char) keycode] == 'z') {
-    		// sanders_printf("Caught ctrl+z\n");
-    		// Do something else
+    		// Caught ctrl+z\n
     	}
     	return;
     }
-    // console_writechar(keyboard_map[(unsigned char) keycode]);
-    // sanders_printf("WHAT?");
+    
     char ascii_key = keyboard_map[(unsigned char) keycode];
     if (ascii_key) {
 	    if (key_status[SHIFT_KEY_CODE] == 1) {
@@ -50,8 +46,8 @@ void shell_keyboard_handler(char keycode) {
 	    		ascii_key = '_';
 	    	}
     	}
-    	sanders_printf("%c", ascii_key);
-	    sandersin[sandersindex++] = ascii_key;
+	    console_writechar(ascii_key);
+        sandersin[sandersindex++] = ascii_key;
     }
 }
 
@@ -113,18 +109,16 @@ void shell_run(char *line) {
 		}
 	}
 
-	func = shell_command_lookup(cmd);
+	func = execute(cmd);
 	if(!func){
-		sanders_printf("%s is not a valid command\n", cmd);
+        console_print(cmd);
+		console_print(" is not a valid command\n");
 	} else {
 		func(argc, argv);
 	}
-    sanders_print("> ");
+    console_print("> ");
 }
 
-FS_PROC shell_command_lookup(char *cmd) {
-    return execute(cmd);
-}
 //NOOOO
 int invalid_command(int argc, char *argv[]) {
 	return 0;

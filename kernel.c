@@ -7,6 +7,7 @@
 #include "stringlib.h"
 #include "video.h"
 #include "sandersboard.h"
+#include "screentext.h"
 
 #define IDT_SIZE 256
 #define INTERRUPT_GATE 0x8e
@@ -15,7 +16,6 @@
 #define VERSION_STRING "Version 0.0.0"
 
 void (*current_keyboard_handler)(char keycode);
-
 
 unsigned char* keyboard_map;
 unsigned char key_status[128] = {0};
@@ -66,47 +66,33 @@ void idt_init(void) {
 void kb_init(void) {
     write_port(0x21 , 0xFD); /* enable keyboard */
     qwerty((int)0,(char**)0);
-    //dvorak((int)0, (char**)0);
 }
 
 int systemcheck() {
     if (mm_init()) { // mm_init has failed
         return 0;
     }
-    sanders_print("initializing system check...\n");
-    sanders_printf("    visualbuffer = %i\n", sandersin);
+    console_print("initializing system check...\n");
 
-    sanders_print("    memory... ");
+    console_print("    memory... ");
     char *mem = mm_alloc(128);
     if (mem) {
-        sanders_print("OK\n");
+        console_print("OK\n");
+        mm_free(mem);
     } else {
+        console_print("BAD\n");
         return 0;
     }
 
-    sanders_print("    hashmaps... ");
-    dmap *map = map_new();
-    if (!map) {
-        return 0;
-    }
-    mm_copy(mem, "OK\n", 4);
-    map_put(map, "test", mem);
-    char *c = (char *)map_get(map, "test");
-    if (c == mem) {
-        sanders_print(c);
-    } else {
-        return 0;
-    }
-
-    sanders_print("    filesystem... ");
+    console_print("    filesystem... ");
     if (fs_init()) {
-        sanders_printf("NOT OK\n");
+        console_print("NOT OK\n");
     } else {
-        sanders_printf("OK\n");
+        console_print("OK\n");
     }
     
 
-    sanders_print("completed system check\n");
+    console_print("completed system check\n");
     return 1;
 }
 
@@ -118,10 +104,9 @@ void kmain(void) {
     console_clear();
 	int i = 2;
     if (systemcheck()) {
-        sanders_printf("Welcome to Kernel Sanders, %s\n\n\n\n", VERSION_STRING);
+        console_print("Welcome to Kernel Sanders\n\n\n\n");
         set_default_keyboard_handler(&shell_keyboard_handler);
-        sanders_print("> ");
-        // sanders_sweeper(0, (char **)0);
+        console_print("> ");
         while(1);
     }
 }
@@ -135,7 +120,9 @@ int fs_init() {
     SYSTEM(videorun);
     SYSTEM(touch);
     SYSTEM(ls);
-    SYSTEM(sanders_sweeper);
+    SYSTEM(si);
+    SYSTEM(dog);
+    SYSTEM(sanderssweeper);
     return 0;
 }
 

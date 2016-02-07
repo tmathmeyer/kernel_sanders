@@ -72,7 +72,7 @@ void ssweeper_reveal(int x, int y) {
 	}
 }
 
-int sanders_sweeper(int argc, char *argv[]) {
+int sanderssweeper(int argc, char *argv[]) {
 	set_keyboard_handler(&sanders_sweeper_keyboard_handler);
 	console_clear();
 
@@ -106,7 +106,6 @@ int sanders_sweeper(int argc, char *argv[]) {
 			if (get_mine(i, j) != SSWEEPER_MINE) {
 				*(minefield + i + j * minefield_x) = '0' + get_mine_adj(i, j);
 			}
-			// screentext_writecharplace(get_mine(i, j), i+SSWEEPER_FIELD_OFFSET_X, j+SSWEEPER_FIELD_OFFSET_Y);
 			screentext_writecharplace('?', i+SSWEEPER_FIELD_OFFSET_X, j+SSWEEPER_FIELD_OFFSET_Y);
 		}
 	}
@@ -116,7 +115,6 @@ int sanders_sweeper(int argc, char *argv[]) {
 }
 
 void sanders_sweeper_keyboard_handler(char keycode) {
-	// sanders_printf("%d", keycode);
 	if (keycode <= 0) {
 		return;
 	}
