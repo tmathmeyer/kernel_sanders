@@ -117,6 +117,7 @@ void kmain(void) {
     if (systemcheck()) {
         sanders_printf("Welcome to Kernel Sanders, %s\n\n\n\n", VERSION_STRING);
         set_keyboard_handler(&shell_keyboard_handler);
+        sanders_print("> ");
         while(1);
     }
 }
@@ -127,6 +128,7 @@ int fs_init() {
     root_fs = map_new();
     SYSTEM(dvorak);
     SYSTEM(qwerty);
+    SYSTEM(touch);
     SYSTEM(ls);
     return 0;
 }

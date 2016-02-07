@@ -104,11 +104,11 @@ void shell_run(char *line) {
 
 	func = shell_command_lookup(cmd);
 	if(!func){
-		sanders_printf("BAD: %s\n", cmd);
+		sanders_printf("%s is not a valid command\n", cmd);
 	} else {
-		sanders_printf("shelly: %s\n", cmd);
 		func(argc, argv);
 	}
+    sanders_print("> ");
 }
 
 FS_PROC shell_command_lookup(char *cmd) {

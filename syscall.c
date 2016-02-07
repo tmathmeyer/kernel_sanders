@@ -38,6 +38,16 @@ int ls(int argc, char *argv[]) {
     }
 }
 
+int touch(int argc, char *argv[]) {
+    if (argc == 0) {
+        sanders_printf("usage: 'touch [file]*'\n");
+    } else {
+        inode *res = mm_alloc(sizeof(struct _inode));
+        res->type = _FILE;
+        map_put(root(), gs_dup(argv[0]), res);
+    }
+}
+
 void *execute(void *exe) {
     inode *exec = (inode *)map_get(root(), exe);
 

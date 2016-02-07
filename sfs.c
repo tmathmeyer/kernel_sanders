@@ -10,7 +10,6 @@ void process(dmap *fs, char *name, FS_PROC fn) {
     inode *res = mm_alloc(sizeof(struct _inode));
     res->type = FUNCTION;
     res->proc = fn;
-    sanders_printf("type = %i\n", res->type);
     map_put(fs, gs_dup(name), res);
 }
 
