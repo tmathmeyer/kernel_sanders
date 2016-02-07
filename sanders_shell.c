@@ -2,6 +2,8 @@
 #include "sandersio.h"
 #include "syscall.h"
 #include "goodstring.h"
+#include "halt.h"
+#include "video.h"
 #include "sfs.h"
 #include "sandersboard.h"
 

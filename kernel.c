@@ -5,6 +5,7 @@
 #include "syscall.h"
 #include "sandersio.h"
 #include "stringlib.h"
+#include "video.h"
 #include "sandersboard.h"
 
 #define IDT_SIZE 256
@@ -15,13 +16,14 @@
 
 void (*current_keyboard_handler)(char keycode);
 
-unsigned char sandersin[256];
-unsigned char sandersindex = 0;
 
 unsigned char* keyboard_map;
 unsigned char key_status[128] = {0};
 extern void keyboard_handler(void);
 extern void load_idt(unsigned long *idt_ptr);
+unsigned char sandersin[255];
+unsigned char sandersindex = 0;
+dmap *syscall_map;
 
 dmap *root_fs;
 
@@ -114,6 +116,7 @@ void kmain(void) {
     kb_init();
     console_init();
     console_clear();
+	int i = 2;
     if (systemcheck()) {
         sanders_printf("Welcome to Kernel Sanders, %s\n\n\n\n", VERSION_STRING);
         set_default_keyboard_handler(&shell_keyboard_handler);
@@ -128,6 +131,7 @@ int fs_init() {
     root_fs = map_new();
     SYSTEM(dvorak);
     SYSTEM(qwerty);
+    SYSTEM(videorun);
     SYSTEM(touch);
     SYSTEM(ls);
     SYSTEM(sanders_sweeper);

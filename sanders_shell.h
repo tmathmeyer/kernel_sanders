@@ -4,7 +4,7 @@
 #include "sfs.h"
 
 FS_PROC shell_command_lookup(char *cmd);
-extern unsigned char sandersin[256];
+extern unsigned char sandersin[255];
 extern unsigned char sandersindex;
 
 // A function pointer

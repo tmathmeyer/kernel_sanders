@@ -32,9 +32,11 @@ int ls(int argc, char *argv[]) {
             if (file->type == FUNCTION) {
                 sanders_printf("executable");
             }
-            if (file->type == _FILE) {
+            else if (file->type == _FILE) {
                 sanders_printf("file");
-            }
+            } else {
+		sanders_printf("%i %i", file->type, gs_len(name));
+	    }
             sanders_printf("\n");
         }
     }
