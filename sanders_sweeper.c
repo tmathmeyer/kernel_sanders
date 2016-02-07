@@ -100,7 +100,6 @@ void move_player(int x, int y) {
 }
 
 void ssweeper_reveal(int x, int y) {
-
 	int i, j;
 	char spot = get_mine(x, y);
 	if (spot == ' ') {
@@ -137,8 +136,8 @@ int sanders_sweeper(int argc, char *argv[]) {
 
 	minefield = mm_alloc(minefield_x * minefield_y);
 
-	for (i = 0; i < minefield_x; i++) {
-		for (j = 0; j < minefield_y; j++) {
+	for (j = 0; j < minefield_y; j++) {
+		for (i = 0; i < minefield_x; i++) {
 			*(minefield + i + j * minefield_x) = ' ';
 		}
 	}
@@ -150,8 +149,8 @@ int sanders_sweeper(int argc, char *argv[]) {
 		*(minefield + i * mine_interval + rand_offset) = SSWEEPER_MINE;
 	}
 
-	for (i = 0; i < minefield_x; i++) {
-		for (j = 0; j < minefield_y; j++) {
+	for (j = 0; j < minefield_y; j++) {
+		for (i = 0; i < minefield_x; i++) {
 			if (get_mine(i, j) != SSWEEPER_MINE) {
 				*(minefield + i + j * minefield_x) = '0' + get_mine_adj(i, j);
 			}
@@ -163,7 +162,6 @@ int sanders_sweeper(int argc, char *argv[]) {
 	player_pos_y = 0;
 
 	player_prev = *(vidmem);
-	draw_cell(player_pos_x, player_pos_y, 'p');
 
 
 	return 0;
@@ -205,7 +203,8 @@ void sanders_sweeper_keyboard_handler(char keycode) {
     switch(ascii_key) {
     	case ' ':
     		ssweeper_reveal(player_pos_x, player_pos_y);
-    		return;
+			player_prev = *(vidmem + player_pos_x + player_pos_y * 320);
+			return;
     }
 }
 
