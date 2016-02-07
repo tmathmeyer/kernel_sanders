@@ -19,6 +19,8 @@ void (*current_keyboard_handler)(char keycode);
 
 unsigned char* keyboard_map;
 unsigned char key_status[128] = {0};
+unsigned char * vidmem = (unsigned char *)0xa0000;
+
 extern void keyboard_handler(void);
 extern void load_idt(unsigned long *idt_ptr);
 unsigned char sandersin[255];
@@ -122,7 +124,8 @@ int fs_init() {
     SYSTEM(ls);
     SYSTEM(si);
     SYSTEM(dog);
-    SYSTEM(sanderssweeper);
+    SYSTEM(sanders_sweeper);
+    SYSTEM(communism);
     return 0;
 }
 
