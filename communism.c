@@ -86,9 +86,9 @@ void render_grid(int player) {
 			if (player == 1) {
 				communism_draw_cell(i * CELL_SIZE, j * CELL_SIZE, *(grid + i + j * COMMUNISM_WIDTH));
 			} else if (player == 2) {
-				communism_draw_cell(i * CELL_SIZE + (COMMUNISM_WIDTH + 2) * CELL_SIZE, j * CELL_SIZE, *(grid + i + j * COMMUNISM_WIDTH));
+				communism_draw_cell(i * CELL_SIZE + (COMMUNISM_WIDTH) * CELL_SIZE + COMMUNISM_WIDTH/2, (COMMUNISM_HEIGHT - j - 1) * CELL_SIZE, *(grid + i + j * COMMUNISM_WIDTH));
 			} else {
-				communism_draw_cell(i * CELL_SIZE + (COMMUNISM_WIDTH + 2) * CELL_SIZE * 2, j * CELL_SIZE, *(grid + i + j * COMMUNISM_WIDTH));
+				communism_draw_cell(j * CELL_SIZE + (COMMUNISM_WIDTH) * CELL_SIZE * 2 + COMMUNISM_WIDTH, i * CELL_SIZE, *(grid + i + j * COMMUNISM_WIDTH));
 			}
 		}
 	}
