@@ -69,7 +69,8 @@ void* mm_alloc(size_t size) {
     
     split_block(tmp, size);
     tmp->free = 0;
-    return ((void *)tmp) + sizeof(struct header);
+    void *result = ((void *)tmp) + sizeof(struct header);
+    return result;
 }
 
 void mergeblocks(blockhdr *data, blockhdr *next) {
@@ -99,14 +100,13 @@ void mm_free(void* ptr) {
 }
 
 void blockcheck() {
-#ifdef TESTING
     blockhdr *tmp = link;
     while(1) {
-        printf("block @ %i\n", tmp);
-        printf("     size: %i\n", tmp->nxpr - sizeof(struct header));
-        printf("     free: %s\n", tmp->free?"free":"allocated");
-        printf("     last: %s\n", tmp->last?"last":"no");
-        printf("     frst: %s\n", tmp->frst?"frst":"no");
+        sanders_printf("block @ %i\n", tmp);
+        sanders_printf("     size: %i\n", tmp->nxpr - sizeof(struct header));
+        sanders_printf("     free: %s\n", tmp->free?"free":"allocated");
+        sanders_printf("     last: %s\n", tmp->last?"last":"no");
+        sanders_printf("     frst: %s\n", tmp->frst?"frst":"no");
         if (!tmp->last) {
             tmp = ((void *)tmp) + tmp->nxpr + sizeof(struct header);
         } else {
@@ -114,8 +114,7 @@ void blockcheck() {
         }
     }
 done:
-    puts("");
-#endif
+    sanders_printf("\n");
 }
 
 void* mm_zalloc(size_t size) {

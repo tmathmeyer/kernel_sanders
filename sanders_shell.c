@@ -70,10 +70,7 @@ void shell_run(char *line) {
 		sanders_printf("shelly: %s\n", cmd);
 		func(argc, argv);
 	}
-
-
 }
-
 
 FS_PROC shell_command_lookup(char *cmd) {
     return execute(cmd);

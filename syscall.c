@@ -15,15 +15,18 @@ int qwerty(int argc, char* argv[]) {
 
 
 void *execute(void *binary_path_or_static) {
-    sanders_printf("%s\n", binary_path_or_static);
     inode *exec = root();
-    sanders_printf("root is type = %i\n", exec);
+    
+    ls(exec);
+    
+    /*
     exec = descend(exec, "bin");
     exec = descend(exec, binary_path_or_static);
     
     if (exec->type == FUNCTION) {
         return exec->proc;
     }
+    */
     return NULL;
 }
 

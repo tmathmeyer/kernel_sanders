@@ -20,6 +20,7 @@ typedef struct _inode {
 
 int fs_init();
 inode *root();
+void ls(inode *dir);
 inode *mkdir(inode *parent, char *name);
 inode *descend(inode *parent, char *name);
 inode *process(inode *parent, char *name, FS_PROC fn);

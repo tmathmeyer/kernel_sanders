@@ -6,13 +6,11 @@
 
 struct map *map_init(unsigned int size) {
     struct map *result = mm_zalloc(sizeof(struct map));
-    void *temp = mm_zalloc(sizeof(struct kvp**) * size);
+    result->body = mm_zalloc(sizeof(struct kvp*) * size);
     result->size = size;
-    if (temp == 0) {
-        sanders_printf("body not allocated properly\n");
+    for(int i=0;i<size;i++) {
+        (result->body)[i] = 0;
     }
-    result->body = temp;
-    
     return result;
 }
 

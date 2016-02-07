@@ -129,8 +129,6 @@ int systemcheck() {
         return 0;
     }
 
-
-
     sanders_print("    filesystem... ");
     if (fs_init()) {
         return 0;
