@@ -164,14 +164,13 @@ int videorun(int argc, char * argv[]){
 	for(i = 0; i < 320 * 200; i++){
 		vidmem[i] = (i*123) % 255;
 	}*/
-	for(i = 0; i < 10000; i++){
+	for(i = 1; i; i++){
+		video_fill_rect(0, 0, 0, vid_x-1, vid_y-1);
 		for(z = 50; z < 200; z++){
-			video_draw_line(i, i/2+z % 320, 0, (320 - i -z) % 320, 200);
+			video_draw_line(z + (i/30)%255, (i/2+z) % 320, 0, (z) % 320, 200);
 		}
-		video_fill_rect(12, 50, 50, 100, 100);
-		for(z = 1; z; z++){
-			vid_x = 320;
-		}
+		video_fill_rect((i/50)%255, 50, 50, 100, 100);
+		sleepy_sanders(1000000);
 	}
 //	sanders_printf("video mode is %i\n", get_mode());
 //	video_mode();

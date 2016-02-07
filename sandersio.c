@@ -18,7 +18,7 @@ int sanders_printf(const char fmt[], ...) {
 	c = *fmt;
 	while (c) {
 //	waiteight();
-	sleepy_sanders(1);
+	sleepy_sanders(1000000);
 		switch (c) {
 			case '\b':
 				// screentext_backspace();
