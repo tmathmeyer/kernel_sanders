@@ -1,9 +1,9 @@
-
 #include "keyboard_map.h"
 #include "syscall.h"
 #include "sfs.h"
 #include "alloc.h"
 #include "sandersio.h"
+#include "goodstring.h"
 
 int dvorak(int argc, char* argv[]) {
     keyboard_map = dvorak_keyboard_map;
@@ -15,13 +15,31 @@ int qwerty(int argc, char* argv[]) {
     return 0;
 }
 
+int ls(int argc, char *argv[]) {
+    if (argc == 0) {
+        sanders_printf("listing for /\n");
+    }
+    char *name;
+    inode *file;
+    dmap *r = root();
+    map_each(r, name, file) {
+        if (file && name && gs_len(name) > 1) {
+            sanders_printf("  ");
+            sanders_printf(name);
+            sanders_printf("  ");
+            if (file->type == FUNCTION) {
+                sanders_printf("executable");
+            }
+            if (file->type == _FILE) {
+                sanders_printf("file");
+            }
+            sanders_printf("\n");
+        }
+    }
+}
 
 void *execute(void *exe) {
     inode *exec = (inode *)map_get(root(), exe);
-
-    if (exec != NULL) {
-        sanders_printf("type = %i\n", exec->type);
-    }
 
     if (exec->type == FUNCTION) {
         return exec->proc;

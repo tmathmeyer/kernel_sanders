@@ -18,7 +18,6 @@ typedef struct _inode {
 
 int fs_init();
 dmap *root();
-void ls(inode *dir);
 inode *descend(inode *parent, char *name);
 void process(dmap *fs, char *name, FS_PROC fn);
 

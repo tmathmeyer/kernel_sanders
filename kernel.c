@@ -126,6 +126,8 @@ void kmain(void) {
 int fs_init() {
     root_fs = map_new();
     SYSTEM(dvorak);
+    SYSTEM(qwerty);
+    SYSTEM(ls);
     return 0;
 }
 
