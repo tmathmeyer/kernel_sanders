@@ -2,8 +2,11 @@
 #include "alloc.h"
 #include "sandersboard.h"
 #include "syscall.h"
-#include "screentext.h"
 #include "sand_rand.h"
+#include "video.h"
+#include "halt.h"
+
+extern int init_vga(int blah);
 
 char *minefield;
 int minefield_x;
@@ -12,6 +15,47 @@ int mines;
 
 int player_pos_x;
 int player_pos_y;
+
+unsigned char player_prev;
+
+unsigned char * vidmem = (unsigned char *)0xa0000;
+
+void draw_cell(int x, int y, char c) {
+	int cell_index = x + y * 320;
+	switch(c) {
+		case '?':
+			*(vidmem + cell_index) = 4;
+			break;
+		case '0':
+			*(vidmem + cell_index) = 0;
+			break;
+		case '1':
+			*(vidmem + cell_index) = 18;
+			break;
+		case '2':
+			*(vidmem + cell_index) = 28;
+			break;
+		case '3':
+			*(vidmem + cell_index) = 23;
+			break;
+		case '4':
+			*(vidmem + cell_index) = 10;
+			break;
+		case '5':
+			*(vidmem + cell_index) = 5;
+			break;
+		case '6':
+			*(vidmem + cell_index) = 6;
+			break;
+		case '7':
+			*(vidmem + cell_index) = 7;
+			break;
+		case '8':
+			*(vidmem + cell_index) = 8;
+			break;
+	}
+	player_prev = *(vidmem + cell_index);
+}
 
 char get_mine(int x, int y) {
 	return *(minefield + x + y * minefield_x);
@@ -35,15 +79,24 @@ char get_mine_adj(int x, int y) {
 }
 
 void move_player(int x, int y) {
-	x = player_pos_x + x;
-	y = player_pos_y + y;
-	if (x >= 0 && x < minefield_x) {
-		player_pos_x = x;
+	if (x != 0) {
+		x = player_pos_x + x;
+		if (x >= 0 && x < minefield_x) {
+			*(vidmem + player_pos_x + player_pos_y * 320) = player_prev;
+			player_pos_x = x;
+			player_prev = *(vidmem + player_pos_x + player_pos_y * 320);
+			*(vidmem + player_pos_x + player_pos_y * 320) = 10;
+		}
 	}
-	if (y >= 0 && y < minefield_y) {
-		player_pos_y = y;
+	if (y != 0) {
+		y = player_pos_y + y;
+		if (y >= 0 && y < minefield_y) {
+			*(vidmem + player_pos_x + player_pos_y * 320) = player_prev;
+			player_pos_y = y;
+			player_prev = *(vidmem + player_pos_x + player_pos_y * 320);
+			*(vidmem + player_pos_x + player_pos_y * 320) = 10;
+		}
 	}
-	set_cursor_pos(player_pos_x + SSWEEPER_FIELD_OFFSET_X, player_pos_y + SSWEEPER_FIELD_OFFSET_Y);
 }
 
 void ssweeper_reveal(int x, int y) {
@@ -57,7 +110,7 @@ void ssweeper_reveal(int x, int y) {
 		sanders_sweeper_exit();
 		return;
 	}
-	screentext_writecharplace(spot, x+SSWEEPER_FIELD_OFFSET_X, y+SSWEEPER_FIELD_OFFSET_Y);
+	draw_cell(x, y, spot);
 	*(minefield + x + y * minefield_x) = ' ';
 	if (spot == '0') {
 		for (i = x-1; i < x+2; i++) {
@@ -73,21 +126,17 @@ void ssweeper_reveal(int x, int y) {
 }
 
 int sanders_sweeper(int argc, char *argv[]) {
+	int i, j;
+	init_vga(0);
+
 	set_keyboard_handler(&sanders_sweeper_keyboard_handler);
-	console_clear();
 
 	minefield_x = SSWEEPER_DEFAULT_WIDTH; 
 	minefield_y = SSWEEPER_DEFAULT_WIDTH;
 	mines = SSWEEPER_DEFAULT_MINES;
 
-	player_pos_x = 0;
-	player_pos_y = 0;
-
-	set_cursor_pos(player_pos_x + SSWEEPER_FIELD_OFFSET_X, player_pos_y + SSWEEPER_FIELD_OFFSET_Y);
-
 	minefield = mm_alloc(minefield_x * minefield_y);
 
-	int i, j;
 	for (i = 0; i < minefield_x; i++) {
 		for (j = 0; j < minefield_y; j++) {
 			*(minefield + i + j * minefield_x) = ' ';
@@ -106,10 +155,15 @@ int sanders_sweeper(int argc, char *argv[]) {
 			if (get_mine(i, j) != SSWEEPER_MINE) {
 				*(minefield + i + j * minefield_x) = '0' + get_mine_adj(i, j);
 			}
-			// screentext_writecharplace(get_mine(i, j), i+SSWEEPER_FIELD_OFFSET_X, j+SSWEEPER_FIELD_OFFSET_Y);
-			screentext_writecharplace('?', i+SSWEEPER_FIELD_OFFSET_X, j+SSWEEPER_FIELD_OFFSET_Y);
+			draw_cell(i, j, '?');
 		}
 	}
+
+	player_pos_x = 0;
+	player_pos_y = 0;
+
+	player_prev = *(vidmem);
+	draw_cell(player_pos_x, player_pos_y, 'p');
 
 
 	return 0;
@@ -155,11 +209,12 @@ void sanders_sweeper_keyboard_handler(char keycode) {
     }
 }
 
+extern void video_mode(void);
 int sanders_sweeper_exit() {
 	mm_free(minefield);
-	set_default_keyboard_handler();
-	console_clear();
-	console_print("Thanks for playing!\n");
+
+	video_mode();
+	halt();
 	return 0;
 }
 
