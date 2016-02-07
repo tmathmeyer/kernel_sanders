@@ -26,6 +26,8 @@ int ls(int argc, char *argv[]) {
     ECHO(ls);
     ECHO(si);
     ECHO(sanders_sweeper);
+    ECHO(communism);
+    ECHO(the_iowa_caucus);
 }
 
 void si_keyboard_handler(char keycode) {
