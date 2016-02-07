@@ -140,13 +140,25 @@ int console_print(char *s){
 	int needsupdate = 0;
 	for(; *s; s++){
 		screen_outbuffer[screen_outbuffery][screen_outbufferx] = *s;
-		if(*s != '\n')screen_outbufferx++;
 		if(screen_outbufferx >= vid_col || *s == '\n'){
 			screen_outbuffer[screen_outbuffery][screen_outbufferx] = 0;
 			screen_outbufferx = 0;
 			screen_outbuffery++;
 			screen_outbuffery = (screen_outbuffery %vid_lines);
 			needsupdate = 1;
+		} else if(*s == '\b'){
+			if (screen_outbufferx > 0) {
+				screen_outbufferx--;
+			} else {
+				screen_outbufferx = vid_col-1;
+				if (screen_outbufferx > 0) {
+					screen_outbuffery--;
+				}
+			}
+			screen_outbuffer[screen_outbuffery][screen_outbufferx] = 0;
+			needsupdate = 1;
+		} else {
+			screen_outbufferx++;
 		}
 
 	}
