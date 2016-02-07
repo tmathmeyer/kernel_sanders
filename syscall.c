@@ -4,6 +4,8 @@
 #include "alloc.h"
 #include "sandersio.h"
 #include "goodstring.h"
+#include "halt.h"
+#include "screentext.h"
 
 int dvorak(int argc, char* argv[]) {
     keyboard_map = dvorak_keyboard_map;
@@ -57,4 +59,16 @@ void *execute(void *exe) {
     return NULL;
 }
 
-
+int sanders_exit(int argc, char* argv[]) {
+	screentext_clear();
+	screentext_writecharplace('G', 16, 4);
+	screentext_writecharplace('o', 17, 4);
+	screentext_writecharplace('o', 18, 4);
+	screentext_writecharplace('d', 19, 4);
+	screentext_writecharplace('b', 20, 4);
+	screentext_writecharplace('y', 21, 4);
+	screentext_writecharplace('e', 22, 4);
+	screentext_writecharplace('!', 23, 4);
+    halt();
+    return 0;
+}

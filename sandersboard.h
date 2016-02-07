@@ -7,8 +7,7 @@
 #define ENTER_KEY_CODE 0x1C
 #define BACKSPACE_KEY_CODE 0x0E
 #define CTRL_KEY_CODE 0x1D
-#define C_KEY_CODE 0x2E
-#define Z_KEY_CODE 0x2C
+#define SHIFT_KEY_CODE 0x2A
 
 extern unsigned char key_status[128];
 extern void (*current_keyboard_handler)(char keycode);
@@ -16,6 +15,7 @@ extern char read_port(unsigned short port);
 extern void write_port(unsigned short port, unsigned char data);
 
 void set_keyboard_handler(void (*new_keyboard_handler)(char keycode));
+void set_default_keyboard_handler();
 void keyboard_handler_main(void);
 
 

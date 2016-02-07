@@ -1,8 +1,12 @@
 
 #include "sandersboard.h"
+#include "sanders_shell.h"
 
 void set_keyboard_handler(void (*new_keyboard_handler)(char keycode)) {
     current_keyboard_handler = new_keyboard_handler;
+}
+void set_default_keyboard_handler() {
+    current_keyboard_handler = shell_keyboard_handler;
 }
 
 void keyboard_handler_main(void) {
