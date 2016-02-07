@@ -13,8 +13,7 @@ int vid_y;
 
 float F_sin (float x) {
     float res=0, pow=x, fact=1;
-    for(int i=0; i<5; ++i)
-    {
+    for(int i=0; i<10; ++i) {
         res+=pow/fact;
         pow*=x*x;
         fact*=(2*(i+1))*(2*(i+1)+1);
@@ -221,8 +220,6 @@ void calc_cube(int * buf, float spinsx, float spinsy, float spinsz, int centx, i
 	for( i = 0; i < 12; i++){
 		vec_t * pp = &verts[indices[i*2] * 3];
 		vec_t * ps = &verts[indices[i*2+1] * 3];
-//		vec_t * pp = &verts[0];
-//		vec_t * ps = &verts[3];
 		vec4_t in1, out1, in2, out2;
 		in1[0] = pp[0];
 		in1[1] = pp[1];
@@ -272,18 +269,7 @@ int videorun(int argc, char * argv[]){
 	proj.m[3][2] = -2.0 * 0.1 * 10.0 / dz;
 	int i,z;
 	int jj = 0;
-	/*
-	for(i = 0; i < 320 * 200; i++){
-		vidmem[i] = (i*123) % 255;
-	}*/
 	for(i = 0; 1; i++){
-//		video_fill_rect(0, 0, 0, vid_x-1, vid_y-1);
-//		for(z = 0; z < 320; z++){
-//			video_draw_line(z % 39, z, 100, z, 100 + 25 * sin(z/10.0));
-//		}
-//		video_fill_rect((i/50)%39, 50, 50, 100, 100);
-//		int x = cos(i / 1000.0 + z * M_PI * 0.5) * 50;
-//		int y = sin(i / 1000.0 + z * M_PI * 0.5) * 50;
 	int x = i % 160;
 	int y = 30;
 		float xoff = F_sin(i * 0.001 + M_PI * 0.5);
@@ -301,8 +287,5 @@ int videorun(int argc, char * argv[]){
 		}
 		sleepy_sanders(10000);
 	}
-//	sanders_printf("video mode is %i\n", get_mode());
-//	video_mode();
-//	text_mode();
 	return 1;
 }

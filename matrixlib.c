@@ -1812,7 +1812,7 @@ void Matrix4x4_Scale (matrix4x4_t *out, double rotatescale, double originscale)
 }
 
 float F_fabs(float x) {
-    if (x > 0) {
+    if (x >= 0) {
         return x;
     }
     return 0.0f-x;

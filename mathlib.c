@@ -7,7 +7,7 @@ float F_sqrt(float n)
 {
     /*We are using n itself as initial approximation
      *    This can definitely be improved */
-    float x = n;
+    float x = n+0.001;
     float y = 1;
     float e = 0.000001; /* e decides the accuracy level*/
     while(x - y > e)
