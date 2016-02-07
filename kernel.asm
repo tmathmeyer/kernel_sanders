@@ -13,6 +13,7 @@ global write_port
 global load_idt
 global video_mode
 global text_mode
+global get_mode
 
 extern kmain 		;this is defined in the c file
 extern keyboard_handler_main
@@ -51,11 +52,18 @@ keyboard_handler:
 	iretd
 
 video_mode:
-	mov ax, 0x13
+	mov ah, 0x00
+	mov al, 0x13
 	int 0x10
 	ret
 text_mode:
-	mov ax, 0x3
+	mov ah, 0x00
+	mov al, 0x3
+	int 0x10
+	ret
+get_mode:
+	mov ah, 0x0F
+;	mov eax, 0x0
 	int 0x10
 	ret
 start:
