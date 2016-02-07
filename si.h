@@ -4,6 +4,7 @@
 #include "screentext.h"
 #include "alloc.h"
 #include "screentext.h"
+#include "stringlib.h"
 
 typedef enum si_mode {
     INSERT,

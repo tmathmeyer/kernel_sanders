@@ -10,6 +10,8 @@ void si_openfile(char* filename) {
     string_copy(status.filename, filename);
     status.fileaddr = fopen(filename);
     status.filelen = getflen(filename);
+    status.mode = INSERT;
+    status.cursorloc = 0;
     screentext_clear();
     update_cursorxy(0,0);
 }
