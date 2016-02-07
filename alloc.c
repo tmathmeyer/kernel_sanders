@@ -69,8 +69,7 @@ void* mm_alloc(size_t size) {
     
     split_block(tmp, size);
     tmp->free = 0;
-    void *result = ((void *)tmp) + sizeof(struct header);
-    return result;
+    return ((void *)tmp) + sizeof(struct header);
 }
 
 void mergeblocks(blockhdr *data, blockhdr *next) {
