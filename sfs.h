@@ -13,10 +13,15 @@ typedef struct _inode {
     char *name;
     char type;
     union {
-        dmap *_dir_sub;
+        struct _ilist *node;
         FS_PROC proc;
     };
 } inode;
+typedef struct _ilist {
+    char *name;
+    struct _inode *node;
+    struct _ilist *next;
+} ilist;
 
 int fs_init();
 inode *root();

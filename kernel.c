@@ -106,6 +106,7 @@ int systemcheck() {
         return 0;
     }
     sanders_print("initializing system check...\n");
+    sanders_printf("    visualbuffer = %i\n", sandersin);
 
     sanders_print("    memory... ");
     char *mem = mm_alloc(256);
