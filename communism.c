@@ -10,13 +10,21 @@ extern int init_vga(int blah);
 
 extern unsigned char * vidmem;
 
-unsigned char *grid;
+unsigned char *grid1;
 
-int player_pos_x;
-int player_pos_y;
-int player_x[4];
-int player_y[4];
-unsigned char player_color;
+int player_pos_x1;
+int player_pos_y1;
+int player_x1[4];
+int player_y1[4];
+unsigned char player_color1;
+
+unsigned char *grid2;
+
+int player_pos_x2;
+int player_pos_y2;
+int player_x2[4];
+int player_y2[4];
+unsigned char player_color2;
 
 int spin_lock;
 
@@ -24,118 +32,147 @@ void communism_draw_cell(int x, int y, unsigned char c) {
 	int i, j;
 	for (j = 1; j < CELL_SIZE-1; j++) {
 		for (i = 1; i < CELL_SIZE-1; i++) {
-			*(vidmem + x + i + 320* (j + y) + 115) = c;
+			*(vidmem + x + i + 320* (j + y)) = c;
 		}
 	}
 	for (i = 0; i < CELL_SIZE; i++) {
-		*(vidmem + x + i + 320* y + 115) = 2;
-		*(vidmem + x + i + 320* (CELL_SIZE + y) + 115) = 2;
-		*(vidmem + x + 320* (i + y) + 115) = 2;
-		*(vidmem + x + CELL_SIZE + 320* (i + y) + 115) = 2;
+		*(vidmem + x + i + 320* y) = 2;
+		*(vidmem + x + i + 320* (CELL_SIZE + y)) = 2;
+		*(vidmem + x + 320* (i + y)) = 2;
+		*(vidmem + x + CELL_SIZE + 320* (i + y)) = 2;
 	}
 }
 
-void render_grid() {
+void render_grid(int player) {
+	int pos_x, pos_y;
+	int *x, *y;
+	unsigned char color;
+	unsigned char* grid;
+	if (player == 1) {
+		pos_x = player_pos_x1;
+		pos_y = player_pos_y1;
+		x = player_x1;
+		y = player_y1;
+		color = player_color1;
+		grid = grid1;
+	} else {
+		pos_x = player_pos_x2;
+		pos_y = player_pos_y2;
+		x = player_x2;
+		y = player_y2;
+		color = player_color2;
+		grid = grid2;
+	}
 	int i, j;
 	for (i = 0; i < 4; i++) {
-		*(grid + player_pos_x + player_x[i] + COMMUNISM_WIDTH * (player_pos_y + player_y[i])) = player_color;
+		*(grid + pos_x + x[i] + COMMUNISM_WIDTH * (pos_y + y[i])) = color;
 	}
 	
 	for (j = 0; j < COMMUNISM_HEIGHT; j++) {
 		for (i = 0; i < COMMUNISM_WIDTH; i++) {
-			communism_draw_cell(i * CELL_SIZE, j * CELL_SIZE, *(grid + i + j * COMMUNISM_WIDTH));
+			if (player == 1) {
+				communism_draw_cell(i * CELL_SIZE, j * CELL_SIZE, *(grid + i + j * COMMUNISM_WIDTH));
+			} else {
+				communism_draw_cell(i * CELL_SIZE + (COMMUNISM_WIDTH + 2) * CELL_SIZE, j * CELL_SIZE, *(grid + i + j * COMMUNISM_WIDTH));
+			}
 		}
 	}
 }
 
-void generate_piece() {
+void generate_piece(int player, int *pos_x, int *pos_y, unsigned char *color, int x[4], int y[4]) {
 	unsigned int piece = sand_rand() % 7;
-	player_pos_x = 4;
-	player_pos_y = 0;
+	*pos_x = 4;
+	*pos_y = 0;
 	switch(piece) {
 		case 0: // Line
-			player_x[0] = -1;
-			player_y[0] = 0;
-			player_x[1] = 0;
-			player_y[1] = 0;
-			player_x[2] = 1;
-			player_y[2] = 0;
-			player_x[3] = 2;
-			player_y[3] = 0;
-			player_color = 33;
+			x[0] = -1;
+			y[0] = 0;
+			x[1] = 0;
+			y[1] = 0;
+			x[2] = 1;
+			y[2] = 0;
+			x[3] = 2;
+			y[3] = 0;
+			*color = 33;
 			break;
 		case 1: // L
-			player_x[0] = -1;
-			player_y[0] = 0;
-			player_x[1] = 0;
-			player_y[1] = 0;
-			player_x[2] = 1;
-			player_y[2] = 0;
-			player_x[3] = 1;
-			player_y[3] = 1;
-			player_color = 38;
+			x[0] = -1;
+			y[0] = 0;
+			x[1] = 0;
+			y[1] = 0;
+			x[2] = 1;
+			y[2] = 0;
+			x[3] = 1;
+			y[3] = 1;
+			*color = 38;
 			break;
 		case 2: // Backwards L
-			player_x[0] = -1;
-			player_y[0] = 0;
-			player_x[1] = 0;
-			player_y[1] = 0;
-			player_x[2] = 1;
-			player_y[2] = 0;
-			player_x[3] = -1;
-			player_y[3] = 1;
-			player_color = 18;
+			x[0] = -1;
+			y[0] = 0;
+			x[1] = 0;
+			y[1] = 0;
+			x[2] = 1;
+			y[2] = 0;
+			x[3] = -1;
+			y[3] = 1;
+			*color = 18;
 			break;
 		case 3: // S
-			player_x[0] = 0;
-			player_y[0] = 0;
-			player_x[1] = 1;
-			player_y[1] = 0;
-			player_x[2] = -1;
-			player_y[2] = 1;
-			player_x[3] = 0;
-			player_y[3] = 1;
-			player_color = 13;
+			x[0] = 0;
+			y[0] = 0;
+			x[1] = 1;
+			y[1] = 0;
+			x[2] = -1;
+			y[2] = 1;
+			x[3] = 0;
+			y[3] = 1;
+			*color = 13;
 			break;
 		case 4: // Z
-			player_x[0] = -1;
-			player_y[0] = 0;
-			player_x[1] = 0;
-			player_y[1] = 0;
-			player_x[2] = 0;
-			player_y[2] = 1;
-			player_x[3] = 1;
-			player_y[3] = 1;
-			player_color = 8;
+			x[0] = -1;
+			y[0] = 0;
+			x[1] = 0;
+			y[1] = 0;
+			x[2] = 0;
+			y[2] = 1;
+			x[3] = 1;
+			y[3] = 1;
+			*color = 8;
 			break;
 		case 5: // T
-			player_x[0] = -1;
-			player_y[0] = 0;
-			player_x[1] = 0;
-			player_y[1] = 0;
-			player_x[2] = 1;
-			player_y[2] = 0;
-			player_x[3] = 0;
-			player_y[3] = 1;
-			player_color = 28;
+			x[0] = -1;
+			y[0] = 0;
+			x[1] = 0;
+			y[1] = 0;
+			x[2] = 1;
+			y[2] = 0;
+			x[3] = 0;
+			y[3] = 1;
+			*color = 28;
 			break;
 		case 6: // Square
-			player_x[0] = 0;
-			player_y[0] = 0;
-			player_x[1] = 1;
-			player_y[1] = 0;
-			player_x[2] = 0;
-			player_y[2] = 1;
-			player_x[3] = 1;
-			player_y[3] = 1;
-			player_color = 23;
+			x[0] = 0;
+			y[0] = 0;
+			x[1] = 1;
+			y[1] = 0;
+			x[2] = 0;
+			y[2] = 1;
+			x[3] = 1;
+			y[3] = 1;
+			*color = 23;
 			break;
 	}
 
-	render_grid();
+	render_grid(player);
 }
 
-void check_grid() {
+void check_grid(int player) {
+	unsigned char* grid;
+	if (player == 1) {
+		grid = grid1;
+	} else {
+		grid = grid2;
+	}
 	int i, j, k;
 	i = COMMUNISM_HEIGHT-1;
 
@@ -149,6 +186,9 @@ void check_grid() {
 		if (cleared == 0) {
 			i--;
 		} else {
+			if (spin_lock > 10000000) {
+				spin_lock -= 1000000;
+			}
 			for (j = i; j >= 1; j--) {
 				for (k = 0; k < COMMUNISM_WIDTH; k++) {
 					*(grid + k + COMMUNISM_WIDTH * j) = *(grid + k + COMMUNISM_WIDTH * (j - 1));
@@ -161,48 +201,93 @@ void check_grid() {
 	}
 }
 
-int down_piece() {
+int down_piece(int player) {
+	int pos_x, pos_y;
+	int *x, *y;
+	unsigned char color;
+	unsigned char *grid;
+	if (player == 1) {
+		pos_x = player_pos_x1;
+		pos_y = player_pos_y1;
+		x = player_x1;
+		y = player_y1;
+		color = player_color1;
+		grid = grid1;
+	} else {
+		pos_x = player_pos_x2;
+		pos_y = player_pos_y2;
+		x = player_x2;
+		y = player_y2;
+		color = player_color2;
+		grid = grid2;
+	}
+
 	int i;
 	int lock = 0;
 	for (i = 0; i < 4; i++) {
-		*(grid + player_pos_x + player_x[i] + COMMUNISM_WIDTH * (player_pos_y + player_y[i])) = 0;
+		*(grid + pos_x + x[i] + COMMUNISM_WIDTH * (pos_y + y[i])) = 0;
 	}
 	for (i = 0; i < 4; i++) {
-		if (player_pos_y + player_y[i] + 1 >= COMMUNISM_HEIGHT) {
+		if (pos_y + y[i] + 1 >= COMMUNISM_HEIGHT) {
 			lock = 1;
 			break;
 		}
-		if (*(grid + player_pos_x + player_x[i] + COMMUNISM_WIDTH * (player_pos_y + player_y[i] + 1)) != 0) {
+		if (*(grid + pos_x + x[i] + COMMUNISM_WIDTH * (pos_y + y[i] + 1)) != 0) {
 			lock = 1;
 			break;
 		}
 	}
 	if (lock) {
 		for (i = 0; i < 4; i++) {
-			*(grid + player_pos_x + player_x[i] + COMMUNISM_WIDTH * (player_pos_y + player_y[i])) = player_color-2;
+			*(grid + pos_x + x[i] + COMMUNISM_WIDTH * (pos_y + y[i])) = color-2;
 		}
-		check_grid();
-		generate_piece();
+		check_grid(player);
+		if (player == 1) {
+			generate_piece(player, &player_pos_x1, &player_pos_y1, &player_color1, player_x1, player_y1);
+		} else {
+			generate_piece(player, &player_pos_x2, &player_pos_y2, &player_color2, player_x2, player_y2);
+		}
 		return 1;
 	} else {
-		player_pos_y ++;
-		render_grid();
+		if (player == 1) {
+			player_pos_y1 ++;
+		} else {
+			player_pos_y2 ++;
+		}
+		render_grid(player);
 		return 0;
 	}
 }
 
-void move_piece(int x) {
+void move_piece(int move, int player) {
+	int pos_x, pos_y;
+	int *x, *y;
+	unsigned char *grid;
+	if (player == 1) {
+		pos_x = player_pos_x1;
+		pos_y = player_pos_y1;
+		x = player_x1;
+		y = player_y1;
+		grid = grid1;
+	} else {
+		pos_x = player_pos_x2;
+		pos_y = player_pos_y2;
+		x = player_x2;
+		y = player_y2;
+		grid = grid2;
+	}
+
 	int i;
 	int lock = 0;
 	for (i = 0; i < 4; i++) {
-		*(grid + player_pos_x + player_x[i] + COMMUNISM_WIDTH * (player_pos_y + player_y[i])) = 0;
+		*(grid + pos_x + x[i] + COMMUNISM_WIDTH * (pos_y + y[i])) = 0;
 	}
 	for (i = 0; i < 4; i++) {
-		if (player_pos_x + player_x[i] + x >= COMMUNISM_WIDTH || player_pos_x + player_x[i] + x < 0) {
+		if (pos_x + x[i] + move >= COMMUNISM_WIDTH || pos_x + x[i] + move < 0) {
 			lock = 1;
 			break;
 		}
-		if (*(grid + player_pos_x + player_x[i] + x + COMMUNISM_WIDTH * (player_pos_y + player_y[i])) != 0) {
+		if (*(grid + pos_x + x[i] + move + COMMUNISM_WIDTH * (pos_y + y[i])) != 0) {
 			lock = 1;
 			break;
 		}
@@ -210,27 +295,48 @@ void move_piece(int x) {
 	if (lock) {
 		return;
 	} else {
-		player_pos_x += x;
-		render_grid();
+		if (player == 1) {
+			player_pos_x1 += move;
+		} else {
+			player_pos_x2 += move;
+		}
+		render_grid(player);
 	}
 }
 
-void rotate_piece() {
+void rotate_piece(int player) {
+	int pos_x, pos_y;
+	int *x, *y;
+	unsigned char *grid;
+	if (player == 1) {
+		pos_x = player_pos_x1;
+		pos_y = player_pos_y1;
+		x = player_x1;
+		y = player_y1;
+		grid = grid1;
+	} else {
+		pos_x = player_pos_x2;
+		pos_y = player_pos_y2;
+		x = player_x2;
+		y = player_y2;
+		grid = grid2;
+	}
+
 	int i;
 	int lock = 0;
 	for (i = 0; i < 4; i++) {
-		*(grid + player_pos_x + player_x[i] + COMMUNISM_WIDTH * (player_pos_y + player_y[i])) = 0;
+		*(grid + pos_x + x[i] + COMMUNISM_WIDTH * (pos_y + y[i])) = 0;
 	}
 	for (i = 0; i < 4; i++) {
-		if (player_pos_x + player_y[i] >= COMMUNISM_WIDTH || player_pos_x + player_y[i] < 0) {
+		if (pos_x + y[i] >= COMMUNISM_WIDTH || pos_x + y[i] < 0) {
 			lock = 1;
 			break;
 		}
-		if (player_pos_y - player_x[i] >= COMMUNISM_HEIGHT || player_pos_y - player_x[i] < 0) {
+		if (pos_y - x[i] >= COMMUNISM_HEIGHT || pos_y - x[i] < 0) {
 			lock = 1;
 			break;
 		}
-		if (*(grid + player_pos_x + player_y[i] + COMMUNISM_WIDTH * (player_pos_y - player_x[i])) != 0) {
+		if (*(grid + pos_x + y[i] + COMMUNISM_WIDTH * (pos_y - x[i])) != 0) {
 			lock = 1;
 			break;
 		}
@@ -239,17 +345,25 @@ void rotate_piece() {
 		return;
 	} else {
 		int temp;
-		for (i = 0; i < 4; i++) {
-			temp = player_x[i];
-			player_x[i] = player_y[i];
-			player_y[i] = -temp;
+		if (player == 1) {
+			for (i = 0; i < 4; i++) {
+				temp = player_x1[i];
+				player_x1[i] = player_y1[i];
+				player_y1[i] = -temp;
+			}
+		} else {
+			for (i = 0; i < 4; i++) {
+				temp = player_x2[i];
+				player_x2[i] = player_y2[i];
+				player_y2[i] = -temp;
+			}
 		}
-		render_grid();
+		render_grid(player);
 	}
 }
 
-void drop_piece() {
-	while(!down_piece()) {
+void drop_piece(int player) {
+	while(!down_piece(player)) {
 
 	}
 }
@@ -261,24 +375,27 @@ int communism(int argc, char *argv[]) {
 
 	spin_lock = 100000000;
 
-	grid = mm_alloc(COMMUNISM_WIDTH * COMMUNISM_HEIGHT);
-
+	grid1 = mm_alloc(COMMUNISM_WIDTH * COMMUNISM_HEIGHT);
+	grid2 = mm_alloc(COMMUNISM_WIDTH * COMMUNISM_HEIGHT);
 
 	for (j = 0; j < COMMUNISM_HEIGHT; j++) {
 		for (i = 0; i < COMMUNISM_WIDTH; i++) {
-			*(grid + i + j * COMMUNISM_WIDTH) = 0;
+			*(grid1 + i + j * COMMUNISM_WIDTH) = 0;
+			*(grid2 + i + j * COMMUNISM_WIDTH) = 0;
 		}
 	}
 
 	set_keyboard_handler(&communism_keyboard_handler);
 
-	generate_piece();
+	generate_piece(1, &player_pos_x1, &player_pos_y1, &player_color1, player_x1, player_y1);
+	generate_piece(2, &player_pos_x2, &player_pos_y2, &player_color2, player_x2, player_y2);
 	while (1) {
 		i = 0; 
 		while (i++ < spin_lock) {
 		}
 
-		down_piece();
+		down_piece(1);
+		down_piece(2);
 	}
 
 	return 0;
@@ -301,33 +418,47 @@ void communism_keyboard_handler(char keycode) {
 
     switch(keycode) {
     	case UP_KEY_CODE:
-    		rotate_piece();
+    		rotate_piece(1);
     		return;
     	case DOWN_KEY_CODE:
-    		down_piece();
+    		down_piece(1);
     		return;
     	case LEFT_KEY_CODE:
-    		move_piece(-1);
+    		move_piece(-1, 1);
     		return;
     	case RIGHT_KEY_CODE:
-    		move_piece(1);
+    		move_piece(1, 1);
     		return;
     	case ENTER_KEY_CODE:
-    		drop_piece();
+    		drop_piece(1);
     }
 
     int ascii_key = keyboard_map[(unsigned char) keycode];
 
     switch(ascii_key) {
     	case ' ':
-    		rotate_piece();
+    		drop_piece(2);
     		return;
+    	case 'w':
+    		rotate_piece(2);
+    		return;
+    	case 'a':
+    		move_piece(-1, 2);
+    		return;
+    	case 's':
+    		down_piece(2);
+    		return;
+    	case 'd':
+    		move_piece(1, 2);
+    		return;
+
     }
 }
 
 extern void video_mode(void);
 int communism_exit() {
-	mm_free(grid);
+	mm_free(grid1);
+	mm_free(grid2);
 
 //	video_mode();
 	halt();
