@@ -4,7 +4,7 @@
 #define VIDEO_WIDTH 320
 #define VIDEO_HEIGHT 200
 
-#define GRADIENT_START 130
+#define GRADIENT_START 64
 
 typedef int ivec_t;
 typedef float vec_t;

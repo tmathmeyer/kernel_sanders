@@ -1,30 +1,31 @@
 # Assorted palette functions go here
 def gradient_generator(incr):
-	palette = []
+    palette = []
 	
-	for i in range(0, 64, incr):
-		c = [str(i) if i >= 10 else '0'+str(i), '63', '00']
-		palette.extend(c)
-	for i in range(63, -1, -incr):
-		c = ['63', str(i) if i >= 10 else '0'+str(i), '00']
-		palette.extend(c)
+    for i in range(0, 64, incr):
+        c = [str(i) if i >= 10 else '0'+str(i), '63', '00']
+        palette.extend(c)
+    for i in range(63, -1, -incr):
+        c = ['63', str(i) if i >= 10 else '0'+str(i), '00']
+        palette.extend(c)
 
-	for i in range(0, 64, incr):
-		c = ['63', '00', str(i) if i >= 10 else '0'+str(i)]
-		palette.extend(c)
-	for i in range(63, -1, -incr):
-		c = [str(i) if i >= 10 else '0'+str(i), '00', '63']
-		palette.extend(c)
+    for i in range(0, 64, incr):
+        c = ['63', '00', str(i) if i >= 10 else '0'+str(i)]
+        palette.extend(c)
+    for i in range(63, -1, -incr):
+        c = [str(i) if i >= 10 else '0'+str(i), '00', '63']
+        palette.extend(c)
 
-	for i in range(0, 64, incr):
-		c = ['00', str(i) if i >= 10 else '0'+str(i), '63']
-		palette.extend(c)
-	for i in range(63, -1, -incr):
-		c = ['00', '63', str(i) if i >= 10 else '0'+str(i)]
-		palette.extend(c)
+    for i in range(0, 64, incr):
+        c = ['00', str(i) if i >= 10 else '0'+str(i), '63']
+        palette.extend(c)
+    for i in range(63, -1, -incr):
+        c = ['00', '63', str(i) if i >= 10 else '0'+str(i)]
+        palette.extend(c)
 
-	for i in range(0, len(palette), 15):
-		print 'db', ', '.join(palette[i:min(i+15, len(palette))])
+    print 256-len(palette)/3
+    for i in range(0, len(palette), 15):
+        print 'db', ', '.join(palette[i:min(i+15, len(palette))])
 
 
 gradient_generator(2)

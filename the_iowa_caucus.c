@@ -96,7 +96,7 @@ int randdir(int x, int y) {
 }
 
 void color(unsigned char* dest, unsigned char* src) {
-    *dest = ((*src - 130 + 1) % (256-130)) + 130;
+    *dest = ((*src - GRADIENT_START + 1) % (256-GRADIENT_START)) + GRADIENT_START;
     // *dest = (*src + 1) % 256;
     // *dest = 130;
 }
@@ -116,7 +116,7 @@ int the_iowa_caucus(int argc, char *argv[]) {
     int x = sand_rand() % VIDEO_WIDTH;
     int y = sand_rand() % VIDEO_HEIGHT;
 
-    *p(x, y) = sand_rand() % (256 - 130) + 130;
+    *p(x, y) = sand_rand() % (256 - GRADIENT_START) + GRADIENT_START;
     
     *pb(x, y) = 5;
 
