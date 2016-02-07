@@ -8,6 +8,10 @@
 #define BACKSPACE_KEY_CODE 0x0E
 #define CTRL_KEY_CODE 0x1D
 #define SHIFT_KEY_CODE 0x2A
+#define UP_KEY_CODE 0x48
+#define LEFT_KEY_CODE 0x4B
+#define DOWN_KEY_CODE 0x50
+#define RIGHT_KEY_CODE 0x4D
 
 extern unsigned char key_status[128];
 extern void (*current_keyboard_handler)(char keycode);

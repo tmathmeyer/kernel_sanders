@@ -13,7 +13,7 @@ void shell_keyboard_handler(char keycode) {
         return;
 
     if(keycode == ENTER_KEY_CODE) {
-        sanders_printf("%c", '\n');
+        console_print("\n");
         sandersin[sandersindex] = 0;
         sandersindex = 0;
         shell_run((char*)sandersin);
@@ -22,24 +22,21 @@ void shell_keyboard_handler(char keycode) {
     if(keycode == BACKSPACE_KEY_CODE) {
         if (sandersindex > 0) {
             sandersin[sandersindex--] = 0;
-            sanders_printf("%c", '\b');
+            console_print("\b");
         }
         return;
     }
     
     if (key_status[CTRL_KEY_CODE] == 1) {
   		if (keyboard_map[(unsigned char) keycode] == 'c') {
-    		// sanders_printf("Caught ctrl+c\n");
-    		// Do something
+    		// Caught ctrl+c\n
     	}
     	if (keyboard_map[(unsigned char) keycode] == 'z') {
-    		// sanders_printf("Caught ctrl+z\n");
-    		// Do something else
+    		// Caught ctrl+z\n
     	}
     	return;
     }
-    // console_writechar(keyboard_map[(unsigned char) keycode]);
-    // sanders_printf("WHAT?");
+    
     char ascii_key = keyboard_map[(unsigned char) keycode];
     if (ascii_key) {
 	    if (key_status[SHIFT_KEY_CODE] == 1) {

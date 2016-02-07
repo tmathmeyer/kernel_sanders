@@ -21,7 +21,7 @@ int qwerty(int argc, char* argv[]) {
 
 int ls(int argc, char *argv[]) {
     if (argc == 0) {
-        sanders_printf("listing for /\n");
+        console_print("listing for /\n");
     }
     char *name;
     inode *file;
@@ -29,25 +29,23 @@ int ls(int argc, char *argv[]) {
     
     map_each(r, name, file) {
         if (file && name && gs_len(name) > 1) {
-            sanders_printf("  ");
-            sanders_printf(name);
-            sanders_printf("  ");
+            console_print("  ");
+            console_print(name);
+            console_print("  ");
             if (file->type == FUNCTION) {
-                sanders_printf("executable");
+                console_print("executable");
             }
             else if (file->type == _FILE) {
-                sanders_printf("file");
-            } else {
-                sanders_printf("%i %i", file->type, gs_len(name));
+                console_print("file");
             }
-            sanders_printf("\n");
+            console_print("\n");
         }
     }
 }
 
 int touch(int argc, char *argv[]) {
     if (argc == 0) {
-        sanders_printf("usage: 'touch [file]+'\n");
+        console_print("usage: 'touch [file]+'\n");
     } else {
         inode *res = mm_alloc(sizeof(struct _inode));
         res->type = _FILE;
@@ -57,7 +55,7 @@ int touch(int argc, char *argv[]) {
 
 int dog(int argc, char *argv[]) {
     if (argc != 1) {
-        sanders_printf("usage: 'dog [file]'\n");
+        console_print("usage: 'dog [file]'\n");
     } else {
         inode *in = map_get(root(), argv[0]);
         if (in->type == _FILE) {
@@ -74,7 +72,7 @@ void si_keyboard_handler(char keycode) {
 
 int si(int argc, char *argv[]) {
     if (argc != 1) {
-        sanders_printf("usage: 'si [file]'\n");
+        console_print("usage: 'si [file]'\n");
     } else {
         //set_keyboard_handler(&si_keyboard_handler);
     }

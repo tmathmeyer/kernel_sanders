@@ -12,9 +12,9 @@ struct map *map_init(unsigned int size) {
 }
 
 void *map_put(struct map *map, char *key, void *val) {
-    sanders_printf("adding %s\n", key);
+    console_print(key);
+    console_print("\n");
     struct kvpl *newl = mm_alloc(sizeof(struct kvpl));
-
     newl->key = gs_dup(key);
     newl->val = val;
     newl->next = map->body;

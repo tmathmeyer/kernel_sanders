@@ -1,6 +1,7 @@
 
 #include "sandersboard.h"
 #include "sanders_shell.h"
+#include "sand_rand.h"
 
 void set_keyboard_handler(void (*new_keyboard_handler)(char keycode)) {
     current_keyboard_handler = new_keyboard_handler;
@@ -18,7 +19,9 @@ void keyboard_handler_main(void) {
     status = read_port(KEYBOARD_STATUS_PORT);
     // Lowest bit of status will be set if buffer is not empty
     if (status & 0x01) {
+        // sanders_printf(" #%d# ", keycode);
         keycode = read_port(KEYBOARD_DATA_PORT);
+        sand_seed((unsigned int) keycode);
         if (keycode < 0) {
             key_status[keycode + 128] = 0;
         } else {
