@@ -19,7 +19,7 @@
 #define COMMUNISM_WIDTH 10
 #define COMMUNISM_HEIGHT 22
 
-#define CELL_SIZE 8
+#define CELL_SIZE 9
 
 void communism_keyboard_handler(char keycode);
 
