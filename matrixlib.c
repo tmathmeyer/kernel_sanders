@@ -1,6 +1,7 @@
 #include "video.h"
 #include "mathlib.h"
 #include "matrixlib.h"
+#include <math.h>
 
 #define MATRIX4x4_OPENGLORIENTATION
 
@@ -503,7 +504,7 @@ void Matrix4x4_Normalize (matrix4x4_t *out, matrix4x4_t *in1)
 {
 	// scale rotation matrix vectors to a length of 1
 	// note: this is only designed to undo uniform scaling
-	double scale = 1.0 / F_sqrt(in1->m[0][0] * in1->m[0][0] + in1->m[0][1] * in1->m[0][1] + in1->m[0][2] * in1->m[0][2]);
+	double scale = 1.0 / sqrt(in1->m[0][0] * in1->m[0][0] + in1->m[0][1] * in1->m[0][1] + in1->m[0][2] * in1->m[0][2]);
 	*out = *in1;
 	Matrix4x4_Scale(out, scale, 1);
 }
@@ -518,7 +519,7 @@ void Matrix4x4_Normalize3 (matrix4x4_t *out, matrix4x4_t *in1)
 	for (i = 0;i < 3;i++)
 	{
 #ifdef MATRIX4x4_OPENGLORIENTATION
-		scale = F_sqrt(in1->m[i][0] * in1->m[i][0] + in1->m[i][1] * in1->m[i][1] + in1->m[i][2] * in1->m[i][2]);
+		scale = sqrt(in1->m[i][0] * in1->m[i][0] + in1->m[i][1] * in1->m[i][1] + in1->m[i][2] * in1->m[i][2]);
 		if (scale)
 			scale = 1.0 / scale;
 		out->m[i][0] *= scale;
@@ -629,14 +630,14 @@ void Matrix4x4_CreateRotate (matrix4x4_t *out, double angle, double x, double y,
 
 	len = x*x+y*y+z*z;
 	if (len != 0.0f)
-		len = 1.0f / F_sqrt(len);
+		len = 1.0f / sqrt(len);
 	x *= len;
 	y *= len;
 	z *= len;
 
 	angle *= (-M_PI / 180.0);
-	c = F_sin(angle + M_PI * 0.5);
-	s = F_sin(angle);
+	c = sin(angle + M_PI * 0.5);
+	s = sin(angle);
 
 #ifdef MATRIX4x4_OPENGLORIENTATION
 	out->m[0][0]=x * x + c * (1 - x * x);
@@ -722,14 +723,14 @@ void Matrix4x4_CreateFromQuakeEntity(matrix4x4_t *out, double x, double y, doubl
 	if (roll)
 	{
 		angle = yaw * (M_PI*2 / 360);
-		sy = F_sin(angle);
-		cy = F_sin(angle + M_PI * 0.5);
+		sy = sin(angle);
+		cy = sin(angle + M_PI * 0.5);
 		angle = pitch * (M_PI*2 / 360);
-		sp = F_sin(angle);
-		cp = F_sin(angle + M_PI * 0.5);
+		sp = sin(angle);
+		cp = sin(angle + M_PI * 0.5);
 		angle = roll * (M_PI*2 / 360);
-		sr = F_sin(angle);
-		cr = F_sin(angle + M_PI * 0.5);
+		sr = sin(angle);
+		cr = sin(angle + M_PI * 0.5);
 #ifdef MATRIX4x4_OPENGLORIENTATION
 		out->m[0][0] = (cp*cy) * scale;
 		out->m[1][0] = (sr*sp*cy+cr*-sy) * scale;
@@ -769,11 +770,11 @@ void Matrix4x4_CreateFromQuakeEntity(matrix4x4_t *out, double x, double y, doubl
 	else if (pitch)
 	{
 		angle = yaw * (M_PI*2 / 360);
-		sy = F_sin(angle);
-		cy = F_sin(angle + M_PI * 0.5);
+		sy = sin(angle);
+		cy = sin(angle + M_PI * 0.5);
 		angle = pitch * (M_PI*2 / 360);
-		sp = F_sin(angle);
-		cp = F_sin(angle + M_PI * 0.5);
+		sp = sin(angle);
+		cp = sin(angle + M_PI * 0.5);
 #ifdef MATRIX4x4_OPENGLORIENTATION
 		out->m[0][0] = (cp*cy) * scale;
 		out->m[1][0] = (-sy) * scale;
@@ -813,8 +814,8 @@ void Matrix4x4_CreateFromQuakeEntity(matrix4x4_t *out, double x, double y, doubl
 	else if (yaw)
 	{
 		angle = yaw * (M_PI*2 / 360);
-		sy = F_sin(angle);
-		cy = F_sin(angle + M_PI * 0.5);
+		sy = sin(angle);
+		cy = sin(angle + M_PI * 0.5);
 #ifdef MATRIX4x4_OPENGLORIENTATION
 		out->m[0][0] = (cy) * scale;
 		out->m[1][0] = (-sy) * scale;
@@ -1460,7 +1461,7 @@ void Matrix4x4_ToOrigin3Quat4Float(const matrix4x4_t *m, float *origin, float *q
 	origin[2] = m->m[3][2];
 	if(trace > 0)
 	{
-		float r = F_sqrt(1.0f + trace), inv = 0.5f / r;
+		float r = sqrt(1.0f + trace), inv = 0.5f / r;
 		quat[0] = (m->m[1][2] - m->m[2][1]) * inv;
 		quat[1] = (m->m[2][0] - m->m[0][2]) * inv;
 		quat[2] = (m->m[0][1] - m->m[1][0]) * inv;
@@ -1468,7 +1469,7 @@ void Matrix4x4_ToOrigin3Quat4Float(const matrix4x4_t *m, float *origin, float *q
 	}
 	else if(m->m[0][0] > m->m[1][1] && m->m[0][0] > m->m[2][2])
 	{
-		float r = F_sqrt(1.0f + m->m[0][0] - m->m[1][1] - m->m[2][2]), inv = 0.5f / r;
+		float r = sqrt(1.0f + m->m[0][0] - m->m[1][1] - m->m[2][2]), inv = 0.5f / r;
 		quat[0] = 0.5f * r;
 		quat[1] = (m->m[0][1] + m->m[1][0]) * inv;
 		quat[2] = (m->m[2][0] + m->m[0][2]) * inv;
@@ -1476,7 +1477,7 @@ void Matrix4x4_ToOrigin3Quat4Float(const matrix4x4_t *m, float *origin, float *q
 	}
 	else if(m->m[1][1] > m->m[2][2])
 	{
-		float r = F_sqrt(1.0f + m->m[1][1] - m->m[0][0] - m->m[2][2]), inv = 0.5f / r;
+		float r = sqrt(1.0f + m->m[1][1] - m->m[0][0] - m->m[2][2]), inv = 0.5f / r;
 		quat[0] = (m->m[0][1] + m->m[1][0]) * inv;
 		quat[1] = 0.5f * r;
 		quat[2] = (m->m[1][2] + m->m[2][1]) * inv;
@@ -1484,7 +1485,7 @@ void Matrix4x4_ToOrigin3Quat4Float(const matrix4x4_t *m, float *origin, float *q
 	}
 	else
 	{
-		float r = F_sqrt(1.0f + m->m[2][2] - m->m[0][0] - m->m[1][1]), inv = 0.5f / r;
+		float r = sqrt(1.0f + m->m[2][2] - m->m[0][0] - m->m[1][1]), inv = 0.5f / r;
 		quat[0] = (m->m[2][0] + m->m[0][2]) * inv;
 		quat[1] = (m->m[1][2] + m->m[2][1]) * inv;
 		quat[2] = 0.5f * r;
@@ -1497,7 +1498,7 @@ void Matrix4x4_ToOrigin3Quat4Float(const matrix4x4_t *m, float *origin, float *q
 	origin[2] = m->m[2][3];
 	if(trace > 0)
 	{
-		float r = F_sqrt(1.0f + trace), inv = 0.5f / r;
+		float r = sqrt(1.0f + trace), inv = 0.5f / r;
 		quat[0] = (m->m[2][1] - m->m[1][2]) * inv;
 		quat[1] = (m->m[0][2] - m->m[2][0]) * inv;
 		quat[2] = (m->m[1][0] - m->m[0][1]) * inv;
@@ -1505,7 +1506,7 @@ void Matrix4x4_ToOrigin3Quat4Float(const matrix4x4_t *m, float *origin, float *q
 	}
 	else if(m->m[0][0] > m->m[1][1] && m->m[0][0] > m->m[2][2])
 	{
-		float r = F_sqrt(1.0f + m->m[0][0] - m->m[1][1] - m->m[2][2]), inv = 0.5f / r;
+		float r = sqrt(1.0f + m->m[0][0] - m->m[1][1] - m->m[2][2]), inv = 0.5f / r;
 		quat[0] = 0.5f * r;
 		quat[1] = (m->m[1][0] + m->m[0][1]) * inv;
 		quat[2] = (m->m[0][2] + m->m[2][0]) * inv;
@@ -1537,7 +1538,7 @@ void Matrix4x4_ToOrigin3Quat4Float(const matrix4x4_t *m, float *origin, float *q
 void Matrix4x4_FromDoom3Joint(matrix4x4_t *m, double ox, double oy, double oz, double x, double y, double z)
 {
 	double w = 1.0f - (x*x+y*y+z*z);
-	w = w > 0.0f ? -F_sqrt(w) : 0.0f;
+	w = w > 0.0f ? -sqrt(w) : 0.0f;
 #ifdef MATRIX4x4_OPENGLORIENTATION
 	m->m[0][0]=1-2*(y*y+z*z);m->m[1][0]=  2*(x*y-z*w);m->m[2][0]=  2*(x*z+y*w);m->m[3][0]=ox;
 	m->m[0][1]=  2*(x*y+z*w);m->m[1][1]=1-2*(x*x+z*z);m->m[2][1]=  2*(y*z-x*w);m->m[3][1]=oy;
@@ -1575,7 +1576,7 @@ void Matrix4x4_ToBonePose7s(const matrix4x4_t *m, float origininvscale, short *p
 	// normalize quaternion so that it is unit length
 	quatscale = quat[0]*quat[0]+quat[1]*quat[1]+quat[2]*quat[2]+quat[3]*quat[3];
 	if (quatscale)
-		quatscale = (quat[3] >= 0 ? -32767.0f : 32767.0f) / F_sqrt(quatscale);
+		quatscale = (quat[3] >= 0 ? -32767.0f : 32767.0f) / sqrt(quatscale);
 	// use a negative scale on the quat because the above function produces a
 	// positive quat[3] and canonical quaternions have negative quat[3]
 	pose7s[0] = origin[0] * origininvscale;
@@ -1653,7 +1654,7 @@ void Matrix4x4_Transform3x3 (const matrix4x4_t *in, const float v[3], float out[
 // transforms a positive distance plane (A*x+B*y+C*z-D=0) through a rotation or translation matrix
 void Matrix4x4_TransformPositivePlane(const matrix4x4_t *in, float x, float y, float z, float d, float *o)
 {
-	float scale = F_sqrt(in->m[0][0] * in->m[0][0] + in->m[0][1] * in->m[0][1] + in->m[0][2] * in->m[0][2]);
+	float scale = sqrt(in->m[0][0] * in->m[0][0] + in->m[0][1] * in->m[0][1] + in->m[0][2] * in->m[0][2]);
 	float iscale = 1.0f / scale;
 #ifdef MATRIX4x4_OPENGLORIENTATION
 	o[0] = (x * in->m[0][0] + y * in->m[1][0] + z * in->m[2][0]) * iscale;
@@ -1671,7 +1672,7 @@ void Matrix4x4_TransformPositivePlane(const matrix4x4_t *in, float x, float y, f
 // transforms a standard plane (A*x+B*y+C*z+D=0) through a rotation or translation matrix
 void Matrix4x4_TransformStandardPlane(const matrix4x4_t *in, float x, float y, float z, float d, float *o)
 {
-	float scale = F_sqrt(in->m[0][0] * in->m[0][0] + in->m[0][1] * in->m[0][1] + in->m[0][2] * in->m[0][2]);
+	float scale = sqrt(in->m[0][0] * in->m[0][0] + in->m[0][1] * in->m[0][1] + in->m[0][2] * in->m[0][2]);
 	float iscale = 1.0f / scale;
 #ifdef MATRIX4x4_OPENGLORIENTATION
 	o[0] = (x * in->m[0][0] + y * in->m[1][0] + z * in->m[2][0]) * iscale;
@@ -1760,7 +1761,7 @@ void Matrix4x4_OriginFromMatrix (const matrix4x4_t *in, float *out)
 double Matrix4x4_ScaleFromMatrix (const matrix4x4_t *in)
 {
 	// we only support uniform scaling, so assume the first row is enough
-	return F_sqrt(in->m[0][0] * in->m[0][0] + in->m[0][1] * in->m[0][1] + in->m[0][2] * in->m[0][2]);
+	return sqrt(in->m[0][0] * in->m[0][0] + in->m[0][1] * in->m[0][1] + in->m[0][2] * in->m[0][2]);
 }
 
 void Matrix4x4_SetOrigin (matrix4x4_t *out, double x, double y, double z)

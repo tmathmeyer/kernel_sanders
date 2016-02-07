@@ -6,30 +6,14 @@
 #include "sleep.h"
 #include "matrixlib.h"
 #include "mathlib.h"
+#include <math.h>
 
 int vid_x;
 int vid_y;
 
 
-float F_sin (float x) {
-    float res=0, pow=x, fact=1;
-    for(int i=0; i<10; ++i) {
-        res+=pow/fact;
-        pow*=x*x;
-        fact*=(2*(i+1))*(2*(i+1)+1);
-    }
-
-    return res;
-}
 
 extern char * vidmem;
-
-inline int abs(int x) {
-    if (x >= 0) {
-        return x;
-    }
-    return -x;
-}
 
 
 //no bounds checks
@@ -272,14 +256,14 @@ int videorun(int argc, char * argv[]){
 	for(i = 0; 1; i++){
 	int x = i % 160;
 	int y = 30;
-		float xoff = F_sin(i * 0.001 + M_PI * 0.5);
-		float yoff = F_sin(i * 0.001);
-		float cent = F_sin(i * 0.00131 + 0.00313) * 20.0;
+		float xoff = sin(i * 0.001 + M_PI * 0.5);
+		float yoff = sin(i * 0.001);
+		float cent = sin(i * 0.00131 + 0.00313) * 20.0;
 		line(i/ 1000 % 39, 160 + xoff * cent, 100 + yoff * cent, 160 + xoff * (40.0 + cent * 0.1), 100 + yoff * (40 + cent * 0.1));
 		if(!(i % 10)){
 			jj = !jj;
-			calc_cube( jj ? newc1 : oldc1, i * 0.01, F_sin(i * 0.00011) * 500.0,0.0, 70, 100, 100.0);
-			calc_cube( jj ? newc2 : oldc2, i * 0.01 + 30.0, F_sin(i * 0.000051) * 1000.0,0.0, 250, 100, 100.0);
+			calc_cube( jj ? newc1 : oldc1, i * 0.01, sin(i * 0.00011) * 500.0,0.0, 70, 100, 100.0);
+			calc_cube( jj ? newc2 : oldc2, i * 0.01 + 30.0, sin(i * 0.000051) * 1000.0,0.0, 250, 100, 100.0);
 			if(jj) draw_cube(6, oldc1, newc1);
 			else draw_cube(6, newc1, oldc1);
 			if(jj) draw_cube(10, oldc2, newc2);
