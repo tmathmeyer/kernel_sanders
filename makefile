@@ -1,7 +1,5 @@
 CC = gcc -fno-stack-protector -m32 -c
 
-CFLAGS = -Wall
-
 OBJECTS = $(wildcard *.c)
 
 all: clear $(OBJECTS:.c=.o)
@@ -9,7 +7,7 @@ all: clear $(OBJECTS:.c=.o)
 	ld -m elf_i386 -T link.ld -o sanders kasm.o $(OBJECTS:.c=.o)
 
 %.o: %.c
-	$(CC) $(CFLAGS) -o $@ $<
+	$(CC) -o $@ $<
 
 run: all
 	qemu-system-i386 -kernel sanders 
