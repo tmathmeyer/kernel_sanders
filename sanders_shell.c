@@ -3,6 +3,7 @@
 #include "syscall.h"
 #include "goodstring.h"
 #include "halt.h"
+#include "video.h"
 
 void shell_run(char *line) {
 	char *cmd;

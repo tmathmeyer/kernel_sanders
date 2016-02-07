@@ -150,5 +150,9 @@ void video_draw_triangle(unsigned int color, ivec_t *verts, void * tridata){
 	}
 }
 
-
-
+extern void video_mode(void);
+extern void text_mode(void);
+void video_fuck(void){
+	video_mode();
+	text_mode();
+}

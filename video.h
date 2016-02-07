@@ -16,6 +16,9 @@ typedef struct texture_s {
 	unsigned int * data;
 } texture_t;
 
+
+void video_fuck(void);
+
 #endif
 
 

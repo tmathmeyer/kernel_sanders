@@ -6,6 +6,7 @@
 #include "keyboard_map.h"
 #include "sandersio.h"
 #include "stringlib.h"
+#include "video.h"
 
 #define KEYBOARD_DATA_PORT 0x60
 #define KEYBOARD_STATUS_PORT 0x64
@@ -144,12 +145,14 @@ void kmain(void) {
     kb_init();
     console_init();
     console_clear();
+	int i = 2;
     if (systemcheck()) {
         syscall_map = map_new();
             map_put(syscall_map, "dvorak", dvorak);
             map_put(syscall_map, "h.soav", dvorak);
             map_put(syscall_map, "qwerty", qwerty);
             map_put(syscall_map, "',.pyf", qwerty);
+	    map_put(syscall_map, "video", video_fuck);
         sanders_printf("Welcome to Kernel Sanders, %s\n\n\n\n", VERSION_STRING);
         while(1);
     }
