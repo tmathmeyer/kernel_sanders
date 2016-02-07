@@ -2,6 +2,8 @@
 #include "video.h"
 #include "sandersio.h"
 #include "boopt.h"
+#include "sleep.h"
+#include <math.h>
 // LOTS OF TODO HERE
 
 unsigned char * vid_buffer;
@@ -9,16 +11,23 @@ int vid_x;
 int vid_y;
 
 
-static inline float float_abs(float in){
-	return in < 0.0 ? -in : in;
-}
-
 
 
 
 
 //no bounds checks
 void video_fill_rect(unsigned char color, int mx, int my, int lx, int ly){
+	int t;
+	if(mx > lx){
+		t = mx;
+		mx = lx;
+		lx = t;
+	}
+	if(my > ly){
+		t = my;
+		my = ly;
+		ly = t;
+	}
 	int y, x;
 	for(y = my; y < ly; y++){
 		unsigned char * line = vid_buffer + y * vid_x;
@@ -44,12 +53,11 @@ void video_draw_line(unsigned char color, int sx, int sy, int ex, int ey){
 		sy = ey;
 		ey = t;
 	}
-	//todo walk the tree
 	float dx = sx - ex;
 	if(dx != 0.0){
 		float dy = sy - ey;
 		float err = 0;
-		float derr = float_abs(dy / dx);
+		float derr = fabs(dy / dx);
 		int x, y = sy;
 		for(x = sx; x < ex; x++){
 			vid_buffer[y*vid_x + x] = color;
@@ -151,9 +159,6 @@ void video_draw_triangle(unsigned int color, ivec_t *verts, void * tridata){
 	}
 }
 
-extern void video_mode(void);
-extern void text_mode(void);
-extern int get_mode(void);
 extern int init_vga(int blah);
 int videorun(int argc, char * argv[]){
 	init_vga(0);
@@ -161,15 +166,22 @@ int videorun(int argc, char * argv[]){
 	vid_buffer = vidmem;
 	vid_x = 320;
 	vid_y = 200;
-	int i;
+	int i,z;
 	/*
 	for(i = 0; i < 320 * 200; i++){
 		vidmem[i] = (i*123) % 255;
 	}*/
-	for(i = 50; i < 200; i++){
-		video_draw_line(i, i, 0, 320 - i, 200);
+	for(i = 0; 1; i++){
+		video_fill_rect(0, 0, 0, vid_x-1, vid_y-1);
+		for(z = 0; z < 320; z++){
+			video_draw_line(z % 39, z, 100, z, 100 + 25 * sin(z/10.0));
+		}
+		video_fill_rect((i/50)%39, 50, 50, 100, 100);
+		int x = cos(i / 1000.0 + z * M_PI * 0.5) * 50;
+		int y = sin(i / 1000.0 + z * M_PI * 0.5) * 50;
+		video_fill_rect(5, 160, 100, 160+x, 100+y);
+		sleepy_sanders(100000);
 	}
-	video_fill_rect(12, 50, 50, 100, 100);
 //	sanders_printf("video mode is %i\n", get_mode());
 //	video_mode();
 //	text_mode();
