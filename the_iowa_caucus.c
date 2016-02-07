@@ -94,9 +94,10 @@ int randdir(int x, int y) {
     }
     return 0;
 }
+int len = 0;
 
 void color(unsigned char* dest, unsigned char* src) {
-    *dest = ((*src - GRADIENT_START + 1) % (256-GRADIENT_START)) + GRADIENT_START;
+    *dest = ((*src - GRADIENT_START + !(len%64)) % (256-GRADIENT_START)) + GRADIENT_START;
 }
 
 extern int init_vga(int blah);
@@ -106,7 +107,7 @@ int the_iowa_caucus(int argc, char *argv[]) {
 
     while(1) {
         pixels_back = mm_alloc(VIDEO_WIDTH * VIDEO_HEIGHT);
-        int i; 
+        int i;
         for (i = 0; i < VIDEO_WIDTH * VIDEO_HEIGHT; i++) {
             *(pixels_back + i) = 0;
         }
@@ -116,6 +117,7 @@ int the_iowa_caucus(int argc, char *argv[]) {
         *pb(x, y) = 5;
         int write = 0;
         do {
+		len++;
             int z = randdir(x,y);
             if (z) {write++;}
             switch(z) {
@@ -155,14 +157,16 @@ int the_iowa_caucus(int argc, char *argv[]) {
                     *pb(x,y) = 2;
                     break;
             }
-            for(int i = 0; i<10000; i++);
+            for(int i = 0; i<100000; i++);
         }
         while(*pb(x,y) != 5);
-        
+
         for (i = 0; i < VIDEO_WIDTH * VIDEO_HEIGHT; i++) {
             *(pixels_back + i) = 0;
-            color(p(i,0), 0);
+            *p(i,0) = 0;
         }
+
+
     }
     the_iowa_caucus_exit();
     return 0;

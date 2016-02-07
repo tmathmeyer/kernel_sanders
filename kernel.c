@@ -124,6 +124,7 @@ void kmain(void) {
         init_keyboard();
         console_print("Welcome to Kernel Sanders\n\n\n\n");
         console_print("> ");
+//	communism(0,0);
         while(1);
     }
 }
