@@ -30,6 +30,7 @@ int gs_len(char *X) {
 char *gs_dup(char *X) {
     int size = gs_len(X);
     char *res = mm_alloc(size);
-    mm_copy(res, X, size);
+    char *tmp = res;
+    while(*tmp++ = *X++);
     return res;
 }
