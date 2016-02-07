@@ -7,11 +7,11 @@
 #include "syscall.h"
 #include "video.h"
 
-unsigned char *pixels;
+extern unsigned char *vidmem;
 char *pixels_back;
 
 int randdir(int x, int y) {
-    int i = sand_rand();
+    unsigned int i = sand_rand();
     int k[5] = {0};
     int ct = 0;
 
@@ -60,22 +60,22 @@ int randdir(int x, int y) {
     }
 
     if (k[1] == 1) {
-        k[1] = !(pixels_back + x + (y-1) * VIDEO_WIDTH);
+        k[1] = !*pb(x, y-1);
         ct-=(k[1]?0:1);
     }
 
     if (k[2] == 2) {
-        k[2] = !(pixels_back + x+1 + y * VIDEO_WIDTH);
+        k[2] = !*pb(x+1, y);
         ct-=(k[2]?0:1);
     }
 
     if (k[3] == 3) {
-        k[3] = !(pixels_back + x + (y+1) * VIDEO_WIDTH);
+        k[3] = !*pb(x, y+1);
         ct-=(k[3]?0:1);
     }
 
     if (k[4] == 4) {
-        k[4] = !(pixels_back + x-1 + y * VIDEO_WIDTH);
+        k[4] = !*pb(x-1, y);
         ct-=(k[4]?0:1);
     }
 
@@ -95,14 +95,79 @@ int randdir(int x, int y) {
     return 0;
 }
 
+void color(unsigned char* dest, unsigned char* src) {
+    *dest = ((*src - 130 + 1) % (256-130)) + 130;
+    // *dest = (*src + 1) % 256;
+    // *dest = 130;
+}
+
+extern int init_vga(int blah);
+
 int the_iowa_caucus(int argc, char *argv[]) {
-    pixels = mm_alloc(VIDEO_WIDTH * VIDEO_HEIGHT);
+    init_vga(0);
+
     pixels_back = mm_alloc(VIDEO_WIDTH * VIDEO_HEIGHT);
+
+    int i; 
+    for (i = 0; i < VIDEO_WIDTH * VIDEO_HEIGHT; i++) {
+        *(pixels_back + i) = 0;
+    }
+
+    int x = sand_rand() % VIDEO_WIDTH;
+    int y = sand_rand() % VIDEO_HEIGHT;
+
+    *p(x, y) = sand_rand() % (256 - 130) + 130;
+    
+    *pb(x, y) = 5;
+
+    int write = 0;
+    do {
+        int z = randdir(x,y);
+        if (z) {write++;}
+        switch(z) {
+            case 0:
+                switch(*pb(x,y)) {
+                    case 5:
+                        the_iowa_caucus_exit();
+                        return 0;
+                    case 1:
+                        y--; break;
+                    case 2:
+                        x++; break;
+                    case 3:
+                        y++; break;
+                    case 4:
+                        x--; break;
+                }
+                break;
+            case 1: // go up
+                color(p(x,y-1), p(x,y));
+                y--;
+                *pb(x,y) = 3;
+                break;
+            case 3: // go down
+                color(p(x,y+1), p(x,y));
+                y++;
+                *pb(x,y) = 1;
+                break;
+            case 2: // go right
+                color(p(x+1,y), p(x,y));
+                x++;
+                *pb(x,y) = 4;
+                break;
+            case 4: // go left
+                color(p(x-1,y), p(x,y));
+                x--;
+                *pb(x,y) = 2;
+                break;
+        }
+    }
+    while(*pb(x,y) != 5);
+    the_iowa_caucus_exit();
     return 0;
 }
 
 int the_iowa_caucus_exit() {
-    mm_free(pixels);
     mm_free(pixels_back);
     halt();
     return 0;
@@ -167,90 +232,6 @@ void framebuffer(int x, int y) {
 }
 #endif
 
-int main(int argc, char **argv) {
-    vinfo.grayscale=0;
-    vinfo.bits_per_pixel=32;
-
-    long screensize = vinfo.yres_virtual * finfo.line_length;
-    VIDEO_WIDTH = vinfo.xres;
-    VIDEO_HEIGHT = vinfo.yres;
-
-    fbp = mmap(0, screensize, PROT_READ | PROT_WRITE, MAP_SHARED, fb_fd, (off_t)0);
-done:
-    if(pixels) {
-        free(pixels);
-    }
-#endif
-    pixels = calloc(sizeof(struct pixl), VIDEO_WIDTH*VIDEO_HEIGHT);
-
-    int x = rand() % VIDEO_WIDTH;
-    int y = rand() % VIDEO_HEIGHT;
-
-    p(x,y)->r = (float)rand()/(float)(RAND_MAX)/1.2;
-    p(x,y)->g = (float)rand()/(float)(RAND_MAX)/1.2;
-    p(x,y)->b = (float)rand()/(float)(RAND_MAX)/1.2;
-    p(x,y)->d = 5;
-
-    int write = 0;
-    do {
-        int z = randdir(x,y);
-        if (z) {write++;}
-        switch(z) {
-            case 0:
-                switch(p(x,y)->d) {
-                    case 5:
-                        goto done;
-                    case 1:
-                        y--; break;
-                    case 2:
-                        x++; break;
-                    case 3:
-                        y++; break;
-                    case 4:
-                        x--; break;
-                }
-                break;
-            case 1: // go up
-                color(p(x,y-1), p(x,y));
-                y--;
-                p(x,y)->d = 3;
-#ifdef FRAMEBUFFER
-                framebuffer(x, y);
-#endif
-                break;
-            case 3: // go down
-                color(p(x,y+1), p(x,y));
-                y++;
-                p(x,y)->d = 1;
-#ifdef FRAMEBUFFER
-                framebuffer(x, y);
-#endif
-                break;
-            case 2: // go right
-                color(p(x+1,y), p(x,y));
-                x++;
-                p(x,y)->d = 4;
-#ifdef FRAMEBUFFER
-                framebuffer(x, y);
-#endif
-                break;
-            case 4: // go left
-                color(p(x-1,y), p(x,y));
-                x--;
-                p(x,y)->d = 2;
-#ifdef FRAMEBUFFER
-                framebuffer(x, y);
-#endif
-                break;
-        }
-    }
-    while(p(x,y)->d != 5);
-    goto done;
-#ifndef FRAMEBUFFER
-done:
-      write_bmp(filename, VIDEO_WIDTH, VIDEO_HEIGHT, pixels);
-#endif
-}
 
 #ifndef FRAMEBUFFER
 struct BMPHeader {

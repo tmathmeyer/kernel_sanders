@@ -1,14 +1,17 @@
 #include "alloc.h"
 #include "video.h"
+#include "sandersboard.h"
 #include "sandersio.h"
 #include "boopt.h"
 #include "sleep.h"
 #include <math.h>
 // LOTS OF TODO HERE
 
-unsigned char * vid_buffer;
 int vid_x;
 int vid_y;
+
+extern char * vidmem;
+
 
 //no bounds checks
 void video_fill_rect(unsigned char color, int mx, int my, int lx, int ly){
@@ -25,7 +28,7 @@ void video_fill_rect(unsigned char color, int mx, int my, int lx, int ly){
 	}
 	int y, x;
 	for(y = my; y < ly; y++){
-		unsigned char * line = vid_buffer + y * vid_x;
+		unsigned char * line = vidmem + y * vid_x;
 		for(x = mx; x < lx; x++){
 			line[x] = color;
 		}
@@ -34,7 +37,7 @@ void video_fill_rect(unsigned char color, int mx, int my, int lx, int ly){
 void video_fill_texture(texture_t t, int mx, int my, int lx, int ly){
 	int y, x, tx, ty;
 	for(ty = 0, y = my; y < ly; y++, ty++){
-		unsigned char * line = vid_buffer + y * vid_x;
+		unsigned char * line = vidmem + y * vid_x;
 		unsigned char * tline = t.data + ty * t.res[0];
 		for(tx = 0, x = mx; x < lx; x++, tx++){
 			line[x] = tline[tx];
@@ -52,13 +55,14 @@ void video_draw_line(unsigned char color, int sx, int sy, int ex, int ey){
 	if(dx != 0.0){
 		float dy = sy - ey;
 		float err = 0;
-		float derr = fabs(dy / dx);
+		float derr = (dy / dx);
+		if(derr < 0.0) derr = - derr;
 		int x, y = sy;
 		for(x = sx; x < ex; x++){
-			vid_buffer[y*vid_x + x] = color;
+			vidmem[y*vid_x + x] = color;
 			err += derr;
 			while(err >= 0.5f){
-				vid_buffer[y*vid_x + x] = color;
+				vidmem[y*vid_x + x] = color;
 				y++;
 				err-=1.0;
 			}
@@ -66,11 +70,22 @@ void video_draw_line(unsigned char color, int sx, int sy, int ex, int ey){
 	} else { //vertical
 		int y;
 		for(y = sy; y < ey; y++){
-			vid_buffer[y*vid_x + sx] = color;
+			vidmem[y*vid_x + sx] = color;
 		}
 	}
 }
-static inline float orient2d(vec2_t a, vec2_t b, vec2_t c){
+void line(unsigned char color, int x0, int y0, int x1, int y1) {
+  int dx = abs(x1-x0), sx = x0<x1 ? 1 : -1;
+  int dy = abs(y1-y0), sy = y0<y1 ? 1 : -1;
+  int err = (dx>dy ? dx : -dy)/2, e2;
+  for(;;){
+    vidmem[y0 * vid_x + x0] = color;
+    if (x0==x1 && y0==y1) break;
+    e2 = err;
+    if (e2 >-dx) { err -= dy; x0 += sx; }
+    if (e2 < dy) { err += dx; y0 += sy; }
+  }
+}static inline float orient2d(vec2_t a, vec2_t b, vec2_t c){
     return (b[0]-a[0])*(c[1]-a[1]) - (b[1]-a[1])*(c[0]-a[0]);
 }
 static inline float min3(float a, float b, float c){
@@ -154,11 +169,13 @@ void video_draw_triangle(unsigned int color, ivec_t *verts, void * tridata){
 	}
 }
 
+void video_key_handler(char keycodde){
+	return;
+}
 extern int init_vga(int blah);
 int videorun(int argc, char * argv[]){
+	set_keyboard_handler(&video_key_handler);
 	init_vga(0);
-	unsigned char * vidmem = (unsigned char *)0xa0000;
-	vid_buffer = vidmem;
 	vid_x = 320;
 	vid_y = 200;
 	int i,z;
@@ -166,14 +183,21 @@ int videorun(int argc, char * argv[]){
 	for(i = 0; i < 320 * 200; i++){
 		vidmem[i] = (i*123) % 255;
 	}*/
-	for (z = 128; z < 256; z++) {
-		video_fill_rect(z, z-128, 0, z-127, 100);
-	}
-	for (z = 130; z < 256; z++) {
-		video_fill_rect(z, z-2, 0, z+1-2, 100);
-	}
 	for(i = 0; 1; i++){
-		
+//		video_fill_rect(0, 0, 0, vid_x-1, vid_y-1);
+//		for(z = 0; z < 320; z++){
+//			video_draw_line(z % 39, z, 100, z, 100 + 25 * sin(z/10.0));
+//		}
+//		video_fill_rect((i/50)%39, 50, 50, 100, 100);
+//		int x = cos(i / 1000.0 + z * M_PI * 0.5) * 50;
+//		int y = sin(i / 1000.0 + z * M_PI * 0.5) * 50;
+	int x = i % 160;
+	int y = 30;
+		float xoff = sin(i * 0.001 + M_PI * 0.5);
+		float yoff = sin(i * 0.001);
+		float cent = sin(i * 0.00131 + 0.00313) * 20.0;
+		line(i/ 1000 % 39, 160 + xoff * cent, 100 + yoff * cent, 160 + xoff * (40.0 + cent * 0.1), 100 + yoff * (40 + cent * 0.1));
+		sleepy_sanders(10000);
 	}
 //	sanders_printf("video mode is %i\n", get_mode());
 //	video_mode();

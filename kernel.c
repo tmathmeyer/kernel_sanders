@@ -127,6 +127,7 @@ int fs_init() {
     SYSTEM(dog);
     SYSTEM(sanders_sweeper);
     SYSTEM(communism);
+    SYSTEM(the_iowa_caucus);
     return 0;
 }
 

@@ -39,7 +39,9 @@ void shell_keyboard_handler(char keycode) {
     
     char ascii_key = keyboard_map[(unsigned char) keycode];
     if (ascii_key) {
-	    if (key_status[SHIFT_KEY_CODE] == 1) {
+	    if (key_status[SHIFTR_KEY_CODE] == 1 ||
+	    	key_status[SHIFTL_KEY_CODE] == 1
+	    	) {
 	    	if (ascii_key >= 'a' && ascii_key <= 'z') {
 	    		ascii_key -= 32;
 	    	} else if (ascii_key == '-') {
