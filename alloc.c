@@ -7,21 +7,13 @@
   #include <stdio.h>
 #endif
 
-#define MEM_LO 0x0
-#define MEM_SIZE 0x1FFFFFF0
-
-void *mmebrk() {
-#ifdef TESTING
-    return malloc(MEM_SIZE);
-#else
-    return (void *)MEM_LO;
-#endif
-}
+#define MEM_LO 0x8000
+#define MEM_SIZE 0x8000
 
 blockhdr *link = NULL;
 
 int mm_init(void) {
-    void *mem_low = mmebrk();
+    void *mem_low = (void *)MEM_LO;
     blockhdr *lowloc = (blockhdr *)mem_low;
     lowloc->nxpr = MEM_SIZE - sizeof(struct header);
     lowloc->free = 1;
@@ -34,15 +26,19 @@ int mm_init(void) {
     highloc->free = 1;
     highloc->frst = 1;
     highloc->last = 1;
+
     return 0;
 }
 
-void split_block(blockhdr *block, size_t size) {
+int split_block(blockhdr *block, size_t size) {
     blockhdr *newtail = ((void *)block) + (size + sizeof(struct header));
     blockhdr *nexthead = ((void *)block) + (size + 2*sizeof(struct header));
     blockhdr *last = ((void *)block) + (block->nxpr);
 
     size_t sblock_size = block->nxpr - size - 2*sizeof(struct header);
+    if (sblock_size > 65536) {
+        return 1;
+    }
     newtail->free = 1;
     nexthead->free = 1;
     newtail->nxpr = block->nxpr = size + sizeof(struct header);
@@ -51,6 +47,7 @@ void split_block(blockhdr *block, size_t size) {
     nexthead->last = block->last;
     block->last = 0;
     nexthead->frst = 0;
+    return 0;
 }
 
 void* mm_alloc(size_t size) {
@@ -67,7 +64,9 @@ void* mm_alloc(size_t size) {
         tmp = (blockhdr *)(((void *)tmp) + tmp->nxpr + sizeof(struct header));
     }
     
-    split_block(tmp, size);
+    if (split_block(tmp, size)) {
+        return 0;
+    }
     tmp->free = 0;
     return ((void *)tmp) + sizeof(struct header);
 }
@@ -100,12 +99,14 @@ void mm_free(void* ptr) {
 
 void blockcheck() {
     blockhdr *tmp = link;
-    while(1) {
+    int x = 100;
+    while(x-->0) {
         sanders_printf("block @ %i\n", tmp);
         sanders_printf("     size: %i\n", tmp->nxpr - sizeof(struct header));
         sanders_printf("     free: %s\n", tmp->free?"free":"allocated");
         sanders_printf("     last: %s\n", tmp->last?"last":"no");
         sanders_printf("     frst: %s\n", tmp->frst?"frst":"no");
+        for(int i=0;i<100000000;i++);
         if (!tmp->last) {
             tmp = ((void *)tmp) + tmp->nxpr + sizeof(struct header);
         } else {

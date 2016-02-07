@@ -66,7 +66,6 @@ void idt_init(void) {
 void kb_init(void) {
     write_port(0x21 , 0xFD); /* enable keyboard */
     qwerty((int)0,(char**)0);
-    //dvorak((int)0, (char**)0);
 }
 
 int systemcheck() {
@@ -80,20 +79,7 @@ int systemcheck() {
     char *mem = mm_alloc(128);
     if (mem) {
         sanders_print("OK\n");
-    } else {
-        return 0;
-    }
-
-    sanders_print("    hashmaps... ");
-    dmap *map = map_new();
-    if (!map) {
-        return 0;
-    }
-    mm_copy(mem, "OK\n", 4);
-    map_put(map, "test", mem);
-    char *c = (char *)map_get(map, "test");
-    if (c == mem) {
-        sanders_print(c);
+        mm_free(mem);
     } else {
         return 0;
     }
