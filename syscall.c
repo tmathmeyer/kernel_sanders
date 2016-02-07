@@ -1,6 +1,5 @@
 #include "keyboard_map.h"
 #include "syscall.h"
-#include "sfs.h"
 #include "alloc.h"
 #include "sandersio.h"
 #include "goodstring.h"
@@ -19,51 +18,14 @@ int qwerty(int argc, char* argv[]) {
     return 0;
 }
 
+#define ECHO(name) { console_print(#name); console_print("\n"); }
 int ls(int argc, char *argv[]) {
-    if (argc == 0) {
-        console_print("listing for /\n");
-    }
-    char *name;
-    inode *file;
-    dmap *r = root();
-    
-    map_each(r, name, file) {
-        if (file && name && gs_len(name) > 1) {
-            console_print("  ");
-            console_print(name);
-            console_print("  ");
-            if (file->type == FUNCTION) {
-                console_print("executable");
-            }
-            else if (file->type == _FILE) {
-                console_print("file");
-            }
-            console_print("\n");
-        }
-    }
-}
-
-int touch(int argc, char *argv[]) {
-    if (argc == 0) {
-        console_print("usage: 'touch [file]+'\n");
-    } else {
-        inode *res = mm_alloc(sizeof(struct _inode));
-        res->type = _FILE;
-        map_put(root(), argv[0], res);
-    }
-}
-
-int dog(int argc, char *argv[]) {
-    if (argc != 1) {
-        console_print("usage: 'dog [file]'\n");
-    } else {
-        inode *in = map_get(root(), argv[0]);
-        if (in->type == _FILE) {
-            if (in->contents != NULL) {
-                sanders_print(in->contents);
-            }
-        }
-    }
+    ECHO(dvorak);
+    ECHO(qwerty);
+    ECHO(videorun);
+    ECHO(ls);
+    ECHO(si);
+    ECHO(sanders_sweeper);
 }
 
 void si_keyboard_handler(char keycode) {
@@ -76,15 +38,6 @@ int si(int argc, char *argv[]) {
     } else {
         //set_keyboard_handler(&si_keyboard_handler);
     }
-}
-
-void *execute(char *exe) {
-    inode *exec = (inode *)map_get(root(), exe);
-
-    if (exec->type == FUNCTION) {
-        return exec->proc;
-    }
-    return NULL;
 }
 
 int sanders_exit(int argc, char* argv[]) {

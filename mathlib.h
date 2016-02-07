@@ -5,17 +5,17 @@
 #endif
 
 #define vec2dot(a,b) ((a)[0] * (b)[0] + (a)[1] * (b)[1])
-#define vec2length(a) sqrt(vec2dot((a), (a)))
+#define vec2length(a) F_sqrt(vec2dot((a), (a)))
 
 
 #define vec3dot(a,b) ((a)[0] * (b)[0] + (a)[1] * (b)[1] + (a)[2] * (b)[2])
 #define vec3cross(a,b,c) (a)[0] = (b)[1] * (c)[2] - (c)[1] * (b)[2]; (a)[1] = (b)[2] * (c)[0] - (c)[2] * (b)[0]; (a)[2] = (b)[0] * (c)[1] - (c)[0] * (b)[1];
-#define vec3length(a) sqrt(vec3dot((a), (a)))
+#define vec3length(a) F_sqrt(vec3dot((a), (a)))
 //#define vec3norm(a,b) {float dontusel = vec3length((b));(a)[0] = (b)[0]/dontusel;(a)[1] = (b)[1]/dontusel;(a)[2] = (b)[2]/dontusel;}
 
 #define vec4dot(a,b) ((a)[0] * (b)[0] + (a)[1] * (b)[1] + (a)[2] * (b)[2] + (a)[3] * (b)[3])
 //#define vec4cross(a,b,c) (a)[0] = (b)[1] * (c)[2] - (c)[1] * (b)[2]; (a)[1] = (b)[2] * (c)[0] - (c)[2] * (b)[0]; (a)[2] = (b)[0] * (c)[1] - (c)[0] * (b)[1];
-#define vec4length(a) sqrt(vec4dot((a),(a)))
+#define vec4length(a) F_sqrt(vec4dot((a),(a)))
 //#define vec4norm(a,b) {float dontusel = vec4length((b));(a)[0] = (b)[0]/dontusel;(a)[1] = (b)[1]/dontusel;(a)[2] = (b)[2]/dontusel;}
 
 //add a vector to a vector
@@ -81,6 +81,7 @@
 #define testBBoxInBBox(a,b) ( (a)[1] < (b)[0] && (b)[1] < (a)[0] && (a)[3] < (b)[2] && (b)[3] < (a)[2] && (a)[5] < (b)[4] && (b)[5] < (a)[4] )
 
 
+float F_sqrt(const float x);
 //todo should i inline these?
 void getBBoxPFromBBox(const vec_t * bbox, vec_t *bboxp);
 // distance from one vector to another (dist between points)
