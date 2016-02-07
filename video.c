@@ -3,6 +3,7 @@
 #include "sandersio.h"
 #include "boopt.h"
 #include "sleep.h"
+#include <math.h>
 // LOTS OF TODO HERE
 
 unsigned char * vid_buffer;
@@ -166,8 +167,8 @@ int videorun(int argc, char * argv[]){
 	}*/
 	for(i = 1; i; i++){
 		video_fill_rect(0, 0, 0, vid_x-1, vid_y-1);
-		for(z = 50; z < 200; z++){
-			video_draw_line(z + (i/30)%255, (i/2+z) % 320, 0, (z) % 320, 200);
+		for(z = 0; z < 320; z++){
+			video_draw_line(z % 200, z, 100, z, 100 + 25 * sin(z/10.0));
 		}
 		video_fill_rect((i/50)%255, 50, 50, 100, 100);
 		sleepy_sanders(1000000);
