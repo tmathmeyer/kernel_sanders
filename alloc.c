@@ -121,6 +121,8 @@ void* mm_zalloc(size_t size) {
     if (mem == 0) {
         return mem;
     }
+    blockhdr *t = ((void *)mem) - sizeof(struct header);
+    size = t->nxpr;
     char *c = (char *)mem;
     int i = 0;
     for(;i<size;i++) {

@@ -24,8 +24,8 @@ unsigned int hash(char *key) {
 }
 
 void *map_put(struct map *map, char *key, void *val) {
-    unsigned int h = hash(key);
-    struct kvpl *c_list = (map->body)[h % map->size];
+    unsigned int h = hash(key) % (map->size);
+    struct kvpl *c_list = (map->body)[h];
     struct kvpl *c_temp = c_list;
     while(c_temp) {
         if (gs_comp(key, c_temp->kvp->key)==0) {
@@ -40,11 +40,10 @@ void *map_put(struct map *map, char *key, void *val) {
     new->key = key;
     new->val = val;
     
-    
     struct kvpl *newl = mm_zalloc(sizeof(struct kvpl));
     newl->kvp = new;
     newl->next = c_list;
-    (map->body)[h % map->size] = c_list = newl;
+    (map->body)[h] = c_list = newl;
 
     return NULL;
 }

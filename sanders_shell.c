@@ -105,6 +105,7 @@ void shell_run(char *line) {
 	func = shell_command_lookup(cmd);
 	if(!func){
 		sanders_printf("%s is not a valid command\n", cmd);
+        sanders_printf("filesystem is %i\n", root());
 	} else {
 		func(argc, argv);
 	}

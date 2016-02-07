@@ -4,6 +4,8 @@
 #include "alloc.h"
 #include "sandersio.h"
 #include "goodstring.h"
+#include "screentext.h"
+#include "sandersboard.h"
 
 int dvorak(int argc, char* argv[]) {
     keyboard_map = dvorak_keyboard_map;
@@ -40,11 +42,36 @@ int ls(int argc, char *argv[]) {
 
 int touch(int argc, char *argv[]) {
     if (argc == 0) {
-        sanders_printf("usage: 'touch [file]*'\n");
+        sanders_printf("usage: 'touch [file]+'\n");
     } else {
         inode *res = mm_alloc(sizeof(struct _inode));
         res->type = _FILE;
         map_put(root(), gs_dup(argv[0]), res);
+    }
+}
+
+int dog(int argc, char *argv[]) {
+    if (argc != 1) {
+        sanders_printf("usage: 'dog [file]'\n");
+    } else {
+        inode *in = map_get(root(), argv[0]);
+        if (in->type == _FILE) {
+            if (in->contents != NULL) {
+                sanders_print(in->contents);
+            }
+        }
+    }
+}
+
+void si_keyboard_handler(char keycode) {
+
+}
+
+int si(int argc, char *argv[]) {
+    if (argc != 1) {
+        sanders_printf("usage: 'si [file]'\n");
+    } else {
+        //set_keyboard_handler(&si_keyboard_handler);
     }
 }
 

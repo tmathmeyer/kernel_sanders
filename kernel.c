@@ -130,6 +130,8 @@ int fs_init() {
     SYSTEM(qwerty);
     SYSTEM(touch);
     SYSTEM(ls);
+    SYSTEM(si);
+    SYSTEM(dog);
     return 0;
 }
 

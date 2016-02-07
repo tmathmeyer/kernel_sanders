@@ -8,7 +8,7 @@
 #ifndef MAP_H_
 #define MAP_H_
 
-#define DEFAULT_SIZE 10
+#define DEFAULT_SIZE 16
 
 #define map_each(m, k, v) \
     for(unsigned int i=0;i<(m)->size;i++) \
