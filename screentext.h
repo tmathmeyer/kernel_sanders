@@ -4,9 +4,12 @@
 int screen_cursorx;
 int screen_cursory;
 
+void update_cursorxy(int x, int y);
+
 void screentext_clear(void);
 void screentext_writecharplace(char c, int x, int y);
 void screentext_writechar(char c);
+void screentext_writecharnc(char c);
 void screentext_newline(void);
 void screentext_backspace(void);
 
