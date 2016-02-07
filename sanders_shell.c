@@ -3,13 +3,14 @@
 #include "syscall.h"
 #include "goodstring.h"
 #include "halt.h"
+#include "sfs.h"
 
 void shell_run(char *line) {
 	char *cmd;
 	char *args;
 
 	int argc = 0;
-	shell_func func;
+	FS_PROC func;
 
 	cmd = line;
 
@@ -74,9 +75,13 @@ void shell_run(char *line) {
 }
 
 
-shell_func shell_command_lookup(char *cmd) {
-    shell_func call = (shell_func)SYSCALL(cmd);
-    return call;
+FS_PROC shell_command_lookup(char *cmd) {
+    syscall s = SYSCALL("execute");
+    if (s) {
+        void *X = s(cmd);
+        return X;
+    }
+    return NULL;
 }
 //NOOOO
 int invalid_command(int argc, char *argv[]) {

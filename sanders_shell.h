@@ -1,10 +1,9 @@
 #ifndef SHELL_HEADER
 #define SHELL_HEADER
 
-// A function pointer
-typedef int (*shell_func)(int argc, char *argv[]);
+#include "sfs.h"
 
-shell_func shell_command_lookup(char *cmd);
+FS_PROC shell_command_lookup(char *cmd);
 
 void shell_run(char *line);
 

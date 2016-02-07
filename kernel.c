@@ -3,7 +3,6 @@
 #include "map.h"
 #include "sanders_shell.h"
 #include "syscall.h"
-#include "keyboard_map.h"
 #include "sandersio.h"
 
 #define KEYBOARD_DATA_PORT 0x60
@@ -24,7 +23,6 @@ extern void load_idt(unsigned long *idt_ptr);
 
 unsigned char sandersin[255];
 unsigned char sandersindex = 0;
-dmap *syscall_map;
 
 struct IDT_entry {
     unsigned short int offset_lowerbits;
@@ -129,14 +127,23 @@ int systemcheck() {
         return 0;
     }
 
+    sanders_print("    filesystem... ");
+    if (fs_init()) {
+        return 0;
+    } else {
+        sanders_printf("OK\n");
+    }
+
+    sanders_print("    syscalls... ");
+    if (!syscall_init()) {
+        return 0;
+    } else {
+        sanders_printf("OK\n");
+    }
+
     sanders_print("completed system check\n");
     return 1;
 }
-
-void *__syscall(char *c) {
-    return map_get(syscall_map, c);
-}
-
 
 void kmain(void) {
     screentext_clear();
@@ -145,11 +152,6 @@ void kmain(void) {
     console_init();
     console_clear();
     if (systemcheck()) {
-        syscall_map = map_new();
-            map_put(syscall_map, "dvorak", dvorak);
-            map_put(syscall_map, "h.soav", dvorak);
-            map_put(syscall_map, "qwerty", qwerty);
-            map_put(syscall_map, "',.pyf", qwerty);
         sanders_printf("Welcome to Kernel Sanders, %s\n\n\n\n", VERSION_STRING);
         while(1);
     }
