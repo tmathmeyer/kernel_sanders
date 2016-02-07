@@ -1,6 +1,9 @@
 #ifndef VIDEOHEADER
 #define VIDEOHEADER
 
+#define VIDEO_WIDTH 320
+#define VIDEO_HEIGHT 200
+
 typedef int ivec_t;
 typedef float vec_t;
 typedef vec_t vec2_t[2];

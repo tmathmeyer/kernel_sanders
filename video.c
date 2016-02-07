@@ -10,11 +10,6 @@ unsigned char * vid_buffer;
 int vid_x;
 int vid_y;
 
-
-
-
-
-
 //no bounds checks
 void video_fill_rect(unsigned char color, int mx, int my, int lx, int ly){
 	int t;
@@ -171,16 +166,14 @@ int videorun(int argc, char * argv[]){
 	for(i = 0; i < 320 * 200; i++){
 		vidmem[i] = (i*123) % 255;
 	}*/
+	for (z = 128; z < 256; z++) {
+		video_fill_rect(z, z-128, 0, z-127, 100);
+	}
+	for (z = 130; z < 256; z++) {
+		video_fill_rect(z, z-2, 0, z+1-2, 100);
+	}
 	for(i = 0; 1; i++){
-		video_fill_rect(0, 0, 0, vid_x-1, vid_y-1);
-		for(z = 0; z < 320; z++){
-			video_draw_line(z % 39, z, 100, z, 100 + 25 * sin(z/10.0));
-		}
-		video_fill_rect((i/50)%39, 50, 50, 100, 100);
-		int x = cos(i / 1000.0 + z * M_PI * 0.5) * 50;
-		int y = sin(i / 1000.0 + z * M_PI * 0.5) * 50;
-		video_fill_rect(5, 160, 100, 160+x, 100+y);
-		sleepy_sanders(100000);
+		
 	}
 //	sanders_printf("video mode is %i\n", get_mode());
 //	video_mode();
