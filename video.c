@@ -11,16 +11,23 @@ int vid_x;
 int vid_y;
 
 
-static inline float float_abs(float in){
-	return in < 0.0 ? -in : in;
-}
-
 
 
 
 
 //no bounds checks
 void video_fill_rect(unsigned char color, int mx, int my, int lx, int ly){
+	int t;
+	if(mx > lx){
+		t = mx;
+		mx = lx;
+		lx = t;
+	}
+	if(my > ly){
+		t = my;
+		my = ly;
+		ly = t;
+	}
 	int y, x;
 	for(y = my; y < ly; y++){
 		unsigned char * line = vid_buffer + y * vid_x;
@@ -46,12 +53,11 @@ void video_draw_line(unsigned char color, int sx, int sy, int ex, int ey){
 		sy = ey;
 		ey = t;
 	}
-	//todo walk the tree
 	float dx = sx - ex;
 	if(dx != 0.0){
 		float dy = sy - ey;
 		float err = 0;
-		float derr = float_abs(dy / dx);
+		float derr = fabs(dy / dx);
 		int x, y = sy;
 		for(x = sx; x < ex; x++){
 			vid_buffer[y*vid_x + x] = color;
@@ -165,13 +171,16 @@ int videorun(int argc, char * argv[]){
 	for(i = 0; i < 320 * 200; i++){
 		vidmem[i] = (i*123) % 255;
 	}*/
-	for(i = 1; i; i++){
+	for(i = 0; 1; i++){
 		video_fill_rect(0, 0, 0, vid_x-1, vid_y-1);
 		for(z = 0; z < 320; z++){
-			video_draw_line(z % 200, z, 100, z, 100 + 25 * sin(z/10.0));
+			video_draw_line(z % 39, z, 100, z, 100 + 25 * sin(z/10.0));
 		}
-		video_fill_rect((i/50)%255, 50, 50, 100, 100);
-		sleepy_sanders(1000000);
+		video_fill_rect((i/50)%39, 50, 50, 100, 100);
+		int x = cos(i / 1000.0 + z * M_PI * 0.5) * 50;
+		int y = sin(i / 1000.0 + z * M_PI * 0.5) * 50;
+		video_fill_rect(5, 160, 100, 160+x, 100+y);
+		sleepy_sanders(100000);
 	}
 //	sanders_printf("video mode is %i\n", get_mode());
 //	video_mode();
