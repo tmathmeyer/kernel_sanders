@@ -10,80 +10,26 @@
 int vid_x;
 int vid_y;
 
-#define PRECISION_TYPE float
-PRECISION_TYPE hollyConstant = 0.017453292519943295769236907684886;
 
-PRECISION_TYPE sinTable[] = {
-	0.0,                                    //sin(0)
-	0.17364817766693034885171662676931 ,    //sin(10)
-	0.34202014332566873304409961468226 ,    //sin(20)
-	0.5 ,                                    //sin(30)
-	0.64278760968653932632264340990726 ,    //sin(40)
-	0.76604444311897803520239265055542 ,    //sin(50)
-	0.86602540378443864676372317075294 ,    //sin(60)
-	0.93969262078590838405410927732473 ,    //sin(70)
-	0.98480775301220805936674302458952 ,    //sin(80)
-	1.0                                     //sin(90)
-};
+float F_sin (float x) {
+    float res=0, pow=x, fact=1;
+    for(int i=0; i<5; ++i)
+    {
+        res+=pow/fact;
+        pow*=x*x;
+        fact*=(2*(i+1))*(2*(i+1)+1);
+    }
 
-PRECISION_TYPE cosTable[] = {
-	1.0 ,                                    //cos(0)
-	0.99984769515639123915701155881391 ,    //cos(1)
-	0.99939082701909573000624344004393 ,    //cos(2)
-	0.99862953475457387378449205843944 ,    //cos(3)
-	0.99756405025982424761316268064426 ,    //cos(4)
-	0.99619469809174553229501040247389 ,    //cos(5)
-	0.99452189536827333692269194498057 ,    //cos(6)
-	0.99254615164132203498006158933058 ,    //cos(7)
-	0.99026806874157031508377486734485 ,    //cos(8)
-	0.98768834059513772619004024769344         //cos(9)
-};
-// sin (a+b) = sin(a)*cos(b) + sin(b)*cos(a)
-// a = 10*m where m is a natural number and 0<= m <= 90
-// i.e. lets a+b = 18.22
-// then a = 10, b = 8.22
-
-PRECISION_TYPE F_sin ( PRECISION_TYPE x )
-{
-	// useful to pre-calculate
-    double x2 = x*x;
-    double x4 = x2*x2;
-
-    // Calculate the terms
-    // As long as abs(x) < sqrt(6), which is 2.45, all terms will be positive.
-    // Values outside this range should be reduced to [-pi/2, pi/2] anyway for accuracy.
-    // Some care has to be given to the factorials.
-    // They can be pre-calculated by the compiler,
-    // but the value for the higher ones will exceed the storage capacity of int.
-    // so force the compiler to use unsigned long longs (if available) or doubles.
-    double t1 = x * (1.0 - x2 / (2*3));
-    double x5 = x * x4;
-    double t2 = x5 * (1.0 - x2 / (6*7)) / (1.0* 2*3*4*5);
-    double x9 = x5 * x4;
-    double t3 = x9 * (1.0 - x2 / (10*11)) / (1.0* 2*3*4*5*6*7*8*9);
-    double x13 = x9 * x4;
-    double t4 = x13 * (1.0 - x2 / (14*15)) / (1.0* 2*3*4*5*6*7*8*9*10*11*12*13);
-    // add some more if your accuracy requires them.
-    // But remember that x is smaller than 2, and the factorial grows very fast
-    // so I doubt that 2^17 / 17! will add anything.
-    // Even t4 might already be too small to matter when compared with t1.
-
-    // Sum backwards
-    double result = t4;
-    result += t3;
-    result += t2;
-    result += t1;
-
-    return result;
+    return res;
 }
 
 extern char * vidmem;
 
 inline int abs(int x) {
-    if (x > 0) {
+    if (x >= 0) {
         return x;
     }
-    return 0-x;
+    return -x;
 }
 
 
