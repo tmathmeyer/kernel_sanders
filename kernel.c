@@ -26,6 +26,9 @@ extern void load_idt(unsigned long *idt_ptr);
 unsigned char sandersin[255];
 unsigned char sandersindex = 0;
 
+dmap *root_fs;
+
+
 struct IDT_entry {
     unsigned short int offset_lowerbits;
     unsigned short int selector;
@@ -109,7 +112,7 @@ int systemcheck() {
     sanders_printf("    visualbuffer = %i\n", sandersin);
 
     sanders_print("    memory... ");
-    char *mem = mm_alloc(256);
+    char *mem = mm_alloc(128);
     if (mem) {
         sanders_print("OK\n");
     } else {
@@ -132,10 +135,11 @@ int systemcheck() {
 
     sanders_print("    filesystem... ");
     if (fs_init()) {
-        return 0;
+        sanders_printf("NOT OK\n");
     } else {
         sanders_printf("OK\n");
     }
+    
 
     sanders_print("completed system check\n");
     return 1;
@@ -151,4 +155,16 @@ void kmain(void) {
         sanders_printf("Welcome to Kernel Sanders, %s\n\n\n\n", VERSION_STRING);
         while(1);
     }
+}
+
+#define SYSTEM(name) process(root(), #name, name)
+
+int fs_init() {
+    root_fs = map_new();
+    SYSTEM(dvorak);
+    return 0;
+}
+
+dmap *root() {
+    return root_fs;
 }

@@ -14,19 +14,16 @@ int qwerty(int argc, char* argv[]) {
 }
 
 
-void *execute(void *binary_path_or_static) {
-    inode *exec = root();
-    
-    ls(exec);
-    
-    /*
-    exec = descend(exec, "bin");
-    exec = descend(exec, binary_path_or_static);
-    
+void *execute(void *exe) {
+    inode *exec = (inode *)map_get(root(), exe);
+
+    if (exec != NULL) {
+        sanders_printf("type = %i\n", exec->type);
+    }
+
     if (exec->type == FUNCTION) {
         return exec->proc;
     }
-    */
     return NULL;
 }
 
