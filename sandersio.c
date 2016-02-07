@@ -37,10 +37,12 @@ int sanders_printf(const char fmt[], ...) {
 							case 'i':
 							case 'p':
 								itoa(temp, (int) *arg);
-								chars += sanders_printf(temp);
+								chars += string_len(temp);
+								console_print(temp);
 								break;
 							case 's':
-								chars += sanders_printf((char *) *arg);
+								chars += string_len((char *) *arg);
+								console_print((char *) *arg);
 								break;
 							case 'c':
 								console_writechar(*arg);
