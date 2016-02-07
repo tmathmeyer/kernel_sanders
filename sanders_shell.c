@@ -5,6 +5,7 @@
 #include "halt.h"
 #include "video.h"
 #include "sfs.h"
+#include "screentext.h"
 #include "sandersboard.h"
 
 void shell_keyboard_handler(char keycode) {
@@ -12,7 +13,6 @@ void shell_keyboard_handler(char keycode) {
         return;
 
     if(keycode == ENTER_KEY_CODE) {
-        // console_print("\n");
         sanders_printf("%c", '\n');
         sandersin[sandersindex] = 0;
         sandersindex = 0;
@@ -22,7 +22,6 @@ void shell_keyboard_handler(char keycode) {
     if(keycode == BACKSPACE_KEY_CODE) {
         if (sandersindex > 0) {
             sandersin[sandersindex--] = 0;
-            // console_writechar('\b');
             sanders_printf("%c", '\b');
         }
         return;
@@ -50,8 +49,8 @@ void shell_keyboard_handler(char keycode) {
 	    		ascii_key = '_';
 	    	}
     	}
-    	sanders_printf("%c", ascii_key);
-	    sandersin[sandersindex++] = ascii_key;
+	    console_writechar(ascii_key);
+        sandersin[sandersindex++] = ascii_key;
     }
 }
 
@@ -113,19 +112,16 @@ void shell_run(char *line) {
 		}
 	}
 
-	func = shell_command_lookup(cmd);
+	func = execute(cmd);
 	if(!func){
-		sanders_printf("%s is not a valid command\n", cmd);
-        sanders_printf("filesystem is %i\n", root());
+        console_print(cmd);
+		console_print(" is not a valid command\n");
 	} else {
 		func(argc, argv);
 	}
-    sanders_print("> ");
+    console_print("> ");
 }
 
-FS_PROC shell_command_lookup(char *cmd) {
-    return execute(cmd);
-}
 //NOOOO
 int invalid_command(int argc, char *argv[]) {
 	return 0;

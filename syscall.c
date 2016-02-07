@@ -26,7 +26,8 @@ int ls(int argc, char *argv[]) {
     char *name;
     inode *file;
     dmap *r = root();
-    map_each(r, name, file) {
+    /*
+     * map_each(r, name, file) {
         if (file && name && gs_len(name) > 1) {
             sanders_printf("  ");
             sanders_printf(name);
@@ -42,6 +43,7 @@ int ls(int argc, char *argv[]) {
             sanders_printf("\n");
         }
     }
+    */
 }
 
 int touch(int argc, char *argv[]) {
@@ -50,7 +52,7 @@ int touch(int argc, char *argv[]) {
     } else {
         inode *res = mm_alloc(sizeof(struct _inode));
         res->type = _FILE;
-        map_put(root(), gs_dup(argv[0]), res);
+        map_put(root(), argv[0], res);
     }
 }
 
@@ -79,7 +81,7 @@ int si(int argc, char *argv[]) {
     }
 }
 
-void *execute(void *exe) {
+void *execute(char *exe) {
     inode *exec = (inode *)map_get(root(), exe);
 
     if (exec->type == FUNCTION) {

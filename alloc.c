@@ -1,5 +1,4 @@
 #include "alloc.h"
-#include "sandersio.h"
 #include "screentext.h"
 
 #ifdef TESTING
@@ -8,7 +7,7 @@
 #endif
 
 #define MEM_LO 0x8000
-#define MEM_SIZE 0x8000
+#define MEM_SIZE 0x80000
 
 blockhdr *link = NULL;
 
@@ -31,12 +30,16 @@ int mm_init(void) {
 }
 
 int split_block(blockhdr *block, size_t size) {
+    if (block->nxpr == size + sizeof(struct header)) {
+        return 0;
+    }
+
     blockhdr *newtail = ((void *)block) + (size + sizeof(struct header));
     blockhdr *nexthead = ((void *)block) + (size + 2*sizeof(struct header));
     blockhdr *last = ((void *)block) + (block->nxpr);
 
     size_t sblock_size = block->nxpr - size - 2*sizeof(struct header);
-    if (sblock_size > 65536) {
+    if (sblock_size > MEM_SIZE) {
         return 1;
     }
     newtail->free = 1;
@@ -52,6 +55,7 @@ int split_block(blockhdr *block, size_t size) {
 
 void* mm_alloc(size_t size) {
     if (size <= 0) {
+        console_print("size too small");
         return NULL;
     }
     
@@ -60,12 +64,12 @@ void* mm_alloc(size_t size) {
     }
     
     blockhdr *tmp = link;
-    while(!tmp->free && tmp->nxpr >= size + sizeof(struct header)) {
+    while(!tmp->free || tmp->nxpr <= size + sizeof(struct header)) {
         tmp = (blockhdr *)(((void *)tmp) + tmp->nxpr + sizeof(struct header));
     }
     
     if (split_block(tmp, size)) {
-        return 0;
+        return NULL;
     }
     tmp->free = 0;
     return ((void *)tmp) + sizeof(struct header);
@@ -101,20 +105,12 @@ void blockcheck() {
     blockhdr *tmp = link;
     int x = 100;
     while(x-->0) {
-        sanders_printf("block @ %i\n", tmp);
-        sanders_printf("     size: %i\n", tmp->nxpr - sizeof(struct header));
-        sanders_printf("     free: %s\n", tmp->free?"free":"allocated");
-        sanders_printf("     last: %s\n", tmp->last?"last":"no");
-        sanders_printf("     frst: %s\n", tmp->frst?"frst":"no");
-        for(int i=0;i<100000000;i++);
         if (!tmp->last) {
             tmp = ((void *)tmp) + tmp->nxpr + sizeof(struct header);
         } else {
-            goto done;
+            break;
         }
     }
-done:
-    sanders_printf("\n");
 }
 
 void* mm_zalloc(size_t size) {
