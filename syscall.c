@@ -26,8 +26,8 @@ int ls(int argc, char *argv[]) {
     char *name;
     inode *file;
     dmap *r = root();
-    /*
-     * map_each(r, name, file) {
+    
+    map_each(r, name, file) {
         if (file && name && gs_len(name) > 1) {
             sanders_printf("  ");
             sanders_printf(name);
@@ -38,12 +38,11 @@ int ls(int argc, char *argv[]) {
             else if (file->type == _FILE) {
                 sanders_printf("file");
             } else {
-		sanders_printf("%i %i", file->type, gs_len(name));
-	    }
+                sanders_printf("%i %i", file->type, gs_len(name));
+            }
             sanders_printf("\n");
         }
     }
-    */
 }
 
 int touch(int argc, char *argv[]) {

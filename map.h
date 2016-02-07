@@ -11,24 +11,19 @@
 #define DEFAULT_SIZE 16
 
 #define map_each(m, k, v) \
-    for(unsigned int i=0;i<(m)->size;i++) \
-        for(kvpl*itr=((m)->body)[i];itr;itr=itr->next) \
-            for((k)=itr->kvp->key,(v)=itr->kvp->val;(k);(k)=0,v=0)
-
-struct kvp {
-    char *key;
-    void *val;
-};
+    for(kvpl*X=(m)->body;X;X=X->next) \
+        if(k=X->key,v=X->val,1)
 
 typedef
 struct kvpl {
-    struct kvp *kvp;
+    char *key;
+    void *val;
     struct kvpl *next;
 } kvpl;
 
 typedef
 struct map {
-    struct kvpl **body; // null terminated list of KVPs
+    struct kvpl *body; // null terminated list of KVPs
     unsigned int size;
 } dmap;
 
