@@ -3,23 +3,73 @@
 #define TRUE 1
 #define FALSE 0
 
-float F_sqrt(const float x)  
+
+double powerOfTen(int num){
+	double rst = 1.0;
+	if(num >= 0){
+		for(int i = 0; i < num ; i++){
+			rst *= 10.0;
+		}
+	}else{
+		for(int i = 0; i < (0 - num ); i++){
+			rst *= 0.1;
+		}
+	}
+
+	return rst;
+}
+
+float F_sqrt(const float a)  
 {
-    union
-    {
-        int i;
-        float x;
-    } u;
-    u.x = x;
-    u.i = (1<<29) + (u.i >> 1) - (1<<22); 
+	/*
+	   find more detail of this method on wiki methods_of_computing_square_roots
 
-    // Two Babylonian Steps (simplified from:)
-    // u.x = 0.5f * (u.x + x/u.x);
-    // u.x = 0.5f * (u.x + x/u.x);
-    u.x =       u.x + x/u.x;
-    u.x = 0.25f*u.x + x/u.x;
+	 *** Babylonian method cannot get exact zero but approximately value of the square_root
+	 */
+	double z = a; 
+	double rst = 0.0;
+	int max = 8;     // to define maximum digit 
+	int i;
+	double j = 1.0;
+	for(i = max ; i > 0 ; i--){
+		// value must be bigger then 0
+		if(z - (( 2 * rst ) + ( j * powerOfTen(i)))*( j * powerOfTen(i)) >= 0)
+		{
+			while( z - (( 2 * rst ) + ( j * powerOfTen(i)))*( j * powerOfTen(i)) >= 0)
+			{
+				j++;
+				if(j >= 10) break;
 
-    return u.x;
+			}
+			j--; //correct the extra value by minus one to j
+			z -= (( 2 * rst ) + ( j * powerOfTen(i)))*( j * powerOfTen(i)); //find value of z
+
+			rst += j * powerOfTen(i);     // find sum of a
+
+			j = 1.0;
+
+
+		}
+
+	}
+
+	for(i = 0 ; i >= 0 - max ; i--){
+		if(z - (( 2 * rst ) + ( j * powerOfTen(i)))*( j * powerOfTen(i)) >= 0)
+		{
+			while( z - (( 2 * rst ) + ( j * powerOfTen(i)))*( j * powerOfTen(i)) >= 0)
+			{
+				j++;
+
+			}
+			j--;
+			z -= (( 2 * rst ) + ( j * powerOfTen(i)))*( j * powerOfTen(i)); //find value of z
+
+			rst += j * powerOfTen(i);     // find sum of a
+			j = 1.0;
+		}
+	}
+	// find the number on each digit
+	return rst;
 }
 
 //todo should i inline these?
