@@ -11,10 +11,7 @@ global keyboard_handler
 global read_port
 global write_port
 global load_idt
-global video_mode
-global text_mode
-global get_mode
-
+global waiteight
 extern kmain 		;this is defined in the c file
 extern keyboard_handler_main
 
@@ -56,6 +53,7 @@ video_mode:
 	mov al, 0x13
 	int 0x10
 	ret
+
 text_mode:
 	mov ah, 0x00
 	mov al, 0x3
@@ -73,6 +71,16 @@ realstart:
 	mov esp, stack_space
 	call kmain
 	hlt 				;halt the CPU
+
+
+
+waiteight:
+	mov  bx, [46Ch]
+	NoChange:
+	mov  ax, [46Ch]
+	cmp  ax, bx
+	je   NoChange
+	ret
 
 section .bss
 resb 8192; 8KB for stack

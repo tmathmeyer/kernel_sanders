@@ -331,7 +331,7 @@ extern void video_mode(void);
 int communism_exit() {
 	mm_free(grid);
 
-	video_mode();
+//	video_mode();
 	halt();
 	return 0;
 }

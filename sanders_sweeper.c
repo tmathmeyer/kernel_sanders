@@ -211,7 +211,7 @@ extern void video_mode(void);
 int sanders_sweeper_exit() {
 	mm_free(minefield);
 
-	video_mode();
+//	video_mode();
 	halt();
 	return 0;
 }
