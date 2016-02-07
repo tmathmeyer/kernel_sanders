@@ -76,12 +76,7 @@ void shell_run(char *line) {
 
 
 FS_PROC shell_command_lookup(char *cmd) {
-    syscall s = SYSCALL("execute");
-    if (s) {
-        void *X = s(cmd);
-        return X;
-    }
-    return NULL;
+    return execute(cmd);
 }
 //NOOOO
 int invalid_command(int argc, char *argv[]) {

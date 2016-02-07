@@ -3,6 +3,7 @@
 #include "map.h"
 #include "sanders_shell.h"
 #include "syscall.h"
+#include "keyboard_map.h"
 #include "sandersio.h"
 
 #define KEYBOARD_DATA_PORT 0x60
@@ -127,15 +128,10 @@ int systemcheck() {
         return 0;
     }
 
+
+
     sanders_print("    filesystem... ");
     if (fs_init()) {
-        return 0;
-    } else {
-        sanders_printf("OK\n");
-    }
-
-    sanders_print("    syscalls... ");
-    if (!syscall_init()) {
         return 0;
     } else {
         sanders_printf("OK\n");
