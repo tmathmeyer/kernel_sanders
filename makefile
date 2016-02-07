@@ -17,7 +17,7 @@ fontcompiler: font.c font.h
 	gcc font.c -o fontcompiler -D FONTCOMPILER -lm
 
 clean:
-	rm sanders *.o
+	rm -f sanders *.o kernel
 
 clear:
 	clear

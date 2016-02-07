@@ -25,7 +25,7 @@ int ls(int argc, char *argv[]) {
     ECHO(videorun);
     ECHO(ls);
     ECHO(si);
-    ECHO(sanderssweeper);
+    ECHO(sanders_sweeper);
 }
 
 void si_keyboard_handler(char keycode) {

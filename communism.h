@@ -1,5 +1,5 @@
-#ifndef SANDERSSWEEPER_HEADER
-#define SANDERSSWEEPER_HEADER
+#ifndef COMMUNISM_HEADER
+#define COMMUNISM_HEADER
 /*
 #define SSWEEPER_DEFAULT_WIDTH 16
 #define SSWEEPER_DEFAULT_HEIGHT 12
@@ -8,17 +8,21 @@
 #define SSWEEPER_MAX_WIDTH 48
 #define SSWEEPER_MAX_HEIGHT 20
 #define SSWEEPER_DEFAULT_MINES 32
-*/
 #define SSWEEPER_DEFAULT_WIDTH 320
 #define SSWEEPER_DEFAULT_HEIGHT 200
 #define SSWEEPER_DEFAULT_MINES 12000
 
-#define CELLSIZE 8
 
 #define SSWEEPER_MINE '*'
+*/
 
-void sanders_sweeper_keyboard_handler(char keycode);
+#define COMMUNISM_WIDTH 10
+#define COMMUNISM_HEIGHT 22
 
-int sanders_sweeper_exit();
+#define CELL_SIZE 9
 
-#endif // SANDERSSWEEPER_HEADER
+void communism_keyboard_handler(char keycode);
+
+int communism_exit();
+
+#endif // COMMUNISM_HEADER

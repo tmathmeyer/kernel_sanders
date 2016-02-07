@@ -18,6 +18,7 @@ typedef struct texture_s {
 
 
 int videorun(int argc, char * argv[]);
+double F_sin ( double angle );
 
 #endif
 

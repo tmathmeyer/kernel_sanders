@@ -10,6 +10,7 @@
 #include "screentext.h"
 #include "goodstring.h"
 
+
 #define IDT_SIZE 256
 #define INTERRUPT_GATE 0x8e
 #define KERNEL_CODE_SEGMENT_OFFSET 0x08
@@ -20,6 +21,8 @@ void (*current_keyboard_handler)(char keycode);
 
 unsigned char* keyboard_map;
 unsigned char key_status[128] = {0};
+unsigned char * vidmem = (unsigned char *)0xa0000;
+
 extern void keyboard_handler(void);
 extern void load_idt(unsigned long *idt_ptr);
 unsigned char sandersin[255];
@@ -37,7 +40,7 @@ void *execute(char *exe) {
     SYSTEM(videorun);
     SYSTEM(ls);
     SYSTEM(si);
-    SYSTEM(sanderssweeper);
+    SYSTEM(sanders_sweeper);
     return NULL;
 }
 
