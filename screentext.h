@@ -4,6 +4,8 @@
 int screen_cursorx;
 int screen_cursory;
 
+void set_cursor_pos(int x, int y);
+
 void screentext_clear(void);
 void screentext_writecharplace(char c, int x, int y);
 void screentext_writechar(char c);
