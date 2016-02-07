@@ -4,6 +4,8 @@
 #include "alloc.h"
 #include "sandersio.h"
 #include "goodstring.h"
+#include "screentext.h"
+#include "sandersboard.h"
 #include "halt.h"
 #include "screentext.h"
 
@@ -19,40 +21,64 @@ int qwerty(int argc, char* argv[]) {
 
 int ls(int argc, char *argv[]) {
     if (argc == 0) {
-        sanders_printf("listing for /\n");
+        console_print("listing for /\n");
     }
     char *name;
     inode *file;
     dmap *r = root();
+    
     map_each(r, name, file) {
         if (file && name && gs_len(name) > 1) {
-            sanders_printf("  ");
-            sanders_printf(name);
-            sanders_printf("  ");
+            console_print("  ");
+            console_print(name);
+            console_print("  ");
             if (file->type == FUNCTION) {
-                sanders_printf("executable");
+                console_print("executable");
             }
             else if (file->type == _FILE) {
-                sanders_printf("file");
-            } else {
-		sanders_printf("%i %i", file->type, gs_len(name));
-	    }
-            sanders_printf("\n");
+                console_print("file");
+            }
+            console_print("\n");
         }
     }
 }
 
 int touch(int argc, char *argv[]) {
     if (argc == 0) {
-        sanders_printf("usage: 'touch [file]*'\n");
+        console_print("usage: 'touch [file]+'\n");
     } else {
         inode *res = mm_alloc(sizeof(struct _inode));
         res->type = _FILE;
-        map_put(root(), gs_dup(argv[0]), res);
+        map_put(root(), argv[0], res);
     }
 }
 
-void *execute(void *exe) {
+int dog(int argc, char *argv[]) {
+    if (argc != 1) {
+        console_print("usage: 'dog [file]'\n");
+    } else {
+        inode *in = map_get(root(), argv[0]);
+        if (in->type == _FILE) {
+            if (in->contents != NULL) {
+                sanders_print(in->contents);
+            }
+        }
+    }
+}
+
+void si_keyboard_handler(char keycode) {
+
+}
+
+int si(int argc, char *argv[]) {
+    if (argc != 1) {
+        console_print("usage: 'si [file]'\n");
+    } else {
+        //set_keyboard_handler(&si_keyboard_handler);
+    }
+}
+
+void *execute(char *exe) {
     inode *exec = (inode *)map_get(root(), exe);
 
     if (exec->type == FUNCTION) {

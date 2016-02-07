@@ -168,7 +168,6 @@ int sanders_sweeper(int argc, char *argv[]) {
 }
 
 void sanders_sweeper_keyboard_handler(char keycode) {
-	// sanders_printf("%d", keycode);
 	if (keycode <= 0) {
 		return;
 	}
