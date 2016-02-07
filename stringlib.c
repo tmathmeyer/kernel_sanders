@@ -140,9 +140,11 @@ int atoi(const char *a) {
 	return *a == '-' ? -i : i;
 }
 
-char *itoa(const int i) {
+int itoa(char *a, const int i) {
 	if (i == 0) {
-		return "0";
+		*a = '0';
+		*(a+1) = 0;
+		return 2;
 	}
 	int charc = 0;
 	int temp = 1;
@@ -157,8 +159,6 @@ char *itoa(const int i) {
 		charc++;
 	}
 
-	char *a = mm_alloc(charc+1);
-
 	int j;
 	temp = 1;
 	for (j = charc-1; j >= 0; j--) {
@@ -170,5 +170,5 @@ char *itoa(const int i) {
 	}
 	*(a+charc) = 0;
 
-	return a;
+	return charc;
 }

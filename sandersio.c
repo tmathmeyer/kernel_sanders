@@ -3,24 +3,7 @@
 #include "stringlib.h"
 
 int sanders_print(const char *string) {
-	int charc = 0;
-	const char *head = string;
-	while(*head) {
-		switch (*head) {
-			case '\b':
-				// screentext_backspace();
-				break;
-			case '\r':
-				console_clear();
-				break;
-			default:
-				console_writechar(*head);
-		}
-		charc++;
-		head++;
-	}
-
-    return charc;
+    return sanders_printf(string);
 }
 
 // TODO: Remove duplicated code
@@ -45,12 +28,12 @@ int sanders_printf(const char fmt[], ...) {
 				c = *fmt;
 				if (arg) {
 					if (c) {
-						char *temp;
+						char temp[MAX_ITOA_STR];
 						switch(c) {
 							case 'd':
 							case 'i':
 							case 'p':
-								temp = itoa((int) *arg);
+								itoa(temp, (int) *arg);
 								chars += sanders_printf(temp);
 								break;
 							case 's':
@@ -61,8 +44,8 @@ int sanders_printf(const char fmt[], ...) {
 								chars++;
 								break;
 						}
+						arg++;
 					}
-					arg++;
 				}
 				break;
 			default:
@@ -102,12 +85,12 @@ int sanders_sprintf(char *str, const char fmt[], ...) {
 				if (arg) {
 					if (c) {
 						int temp_c;
-						char *temp;
+						char temp[MAX_ITOA_STR];
 						switch(c) {
 							case 'd':
 							case 'i':
 							case 'p':
-								temp = itoa((int) *arg);
+								itoa(temp, (int) *arg);
 								temp_c = sanders_sprintf(head, temp);
 								chars += temp_c;
 								head += temp_c;
@@ -159,12 +142,12 @@ int sanders_snprintf(char *str, const int n, const char fmt[], ...) {
 				if (arg) {
 					if (c) {
 						int chars;
-						char *temp;
+						char temp[MAX_ITOA_STR];
 						switch(c) {
 							case 'd':
 							case 'i':
 							case 'p':
-								temp = itoa((int) *arg);
+								itoa(temp, (int) *arg);
 								chars = sanders_snprintf(head, rem_chars, temp);
 								rem_chars -= chars;
 								head += chars;
