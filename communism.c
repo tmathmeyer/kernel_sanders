@@ -11,7 +11,6 @@ extern int init_vga(int blah);
 extern unsigned char * vidmem;
 
 unsigned char *grid1;
-
 int player_pos_x1;
 int player_pos_y1;
 int player_x1[4];
@@ -19,12 +18,19 @@ int player_y1[4];
 unsigned char player_color1;
 
 unsigned char *grid2;
-
 int player_pos_x2;
 int player_pos_y2;
 int player_x2[4];
 int player_y2[4];
 unsigned char player_color2;
+
+
+unsigned char *grid3;
+int player_pos_x3;
+int player_pos_y3;
+int player_x3[4];
+int player_y3[4];
+unsigned char player_color3;
 
 int spin_lock;
 
@@ -55,13 +61,20 @@ void render_grid(int player) {
 		y = player_y1;
 		color = player_color1;
 		grid = grid1;
-	} else {
+	} else  if (player == 2) {
 		pos_x = player_pos_x2;
 		pos_y = player_pos_y2;
 		x = player_x2;
 		y = player_y2;
 		color = player_color2;
 		grid = grid2;
+	} else {
+		pos_x = player_pos_x3;
+		pos_y = player_pos_y3;
+		x = player_x3;
+		y = player_y3;
+		color = player_color3;
+		grid = grid3;
 	}
 	int i, j;
 	for (i = 0; i < 4; i++) {
@@ -72,8 +85,10 @@ void render_grid(int player) {
 		for (i = 0; i < COMMUNISM_WIDTH; i++) {
 			if (player == 1) {
 				communism_draw_cell(i * CELL_SIZE, j * CELL_SIZE, *(grid + i + j * COMMUNISM_WIDTH));
-			} else {
+			} else if (player == 2) {
 				communism_draw_cell(i * CELL_SIZE + (COMMUNISM_WIDTH + 2) * CELL_SIZE, j * CELL_SIZE, *(grid + i + j * COMMUNISM_WIDTH));
+			} else {
+				communism_draw_cell(i * CELL_SIZE + (COMMUNISM_WIDTH + 2) * CELL_SIZE * 2, j * CELL_SIZE, *(grid + i + j * COMMUNISM_WIDTH));
 			}
 		}
 	}
@@ -170,8 +185,10 @@ void check_grid(int player) {
 	unsigned char* grid;
 	if (player == 1) {
 		grid = grid1;
-	} else {
+	} else if (player == 2) {
 		grid = grid2;
+	} else {
+		grid = grid3;
 	}
 	int i, j, k;
 	i = COMMUNISM_HEIGHT-1;
@@ -213,13 +230,20 @@ int down_piece(int player) {
 		y = player_y1;
 		color = player_color1;
 		grid = grid1;
-	} else {
+	} else if (player == 2) {
 		pos_x = player_pos_x2;
 		pos_y = player_pos_y2;
 		x = player_x2;
 		y = player_y2;
 		color = player_color2;
 		grid = grid2;
+	} else {
+		pos_x = player_pos_x3;
+		pos_y = player_pos_y3;
+		x = player_x3;
+		y = player_y3;
+		color = player_color3;
+		grid = grid3;
 	}
 
 	int i;
@@ -244,15 +268,19 @@ int down_piece(int player) {
 		check_grid(player);
 		if (player == 1) {
 			generate_piece(player, &player_pos_x1, &player_pos_y1, &player_color1, player_x1, player_y1);
-		} else {
+		} else if (player == 2) {
 			generate_piece(player, &player_pos_x2, &player_pos_y2, &player_color2, player_x2, player_y2);
+		} else {
+			generate_piece(player, &player_pos_x3, &player_pos_y3, &player_color3, player_x3, player_y3);
 		}
 		return 1;
 	} else {
 		if (player == 1) {
 			player_pos_y1 ++;
-		} else {
+		} else if (player == 2) {
 			player_pos_y2 ++;
+		} else {
+			player_pos_y3 ++;	
 		}
 		render_grid(player);
 		return 0;
@@ -269,12 +297,18 @@ void move_piece(int move, int player) {
 		x = player_x1;
 		y = player_y1;
 		grid = grid1;
-	} else {
+	} else if (player == 2) {
 		pos_x = player_pos_x2;
 		pos_y = player_pos_y2;
 		x = player_x2;
 		y = player_y2;
 		grid = grid2;
+	} else {
+		pos_x = player_pos_x3;
+		pos_y = player_pos_y3;
+		x = player_x3;
+		y = player_y3;
+		grid = grid3;	
 	}
 
 	int i;
@@ -297,8 +331,10 @@ void move_piece(int move, int player) {
 	} else {
 		if (player == 1) {
 			player_pos_x1 += move;
-		} else {
+		} else if (player == 2) {
 			player_pos_x2 += move;
+		} else {
+			player_pos_x3 += move;
 		}
 		render_grid(player);
 	}
@@ -314,12 +350,18 @@ void rotate_piece(int player) {
 		x = player_x1;
 		y = player_y1;
 		grid = grid1;
-	} else {
+	} else if (player == 2) {
 		pos_x = player_pos_x2;
 		pos_y = player_pos_y2;
 		x = player_x2;
 		y = player_y2;
 		grid = grid2;
+	} else {
+		pos_x = player_pos_x3;
+		pos_y = player_pos_y3;
+		x = player_x3;
+		y = player_y3;
+		grid = grid3;
 	}
 
 	int i;
@@ -351,11 +393,17 @@ void rotate_piece(int player) {
 				player_x1[i] = player_y1[i];
 				player_y1[i] = -temp;
 			}
-		} else {
+		} else if (player == 2) {
 			for (i = 0; i < 4; i++) {
 				temp = player_x2[i];
 				player_x2[i] = player_y2[i];
 				player_y2[i] = -temp;
+			}
+		} else {
+			for (i = 0; i < 4; i++) {
+				temp = player_x3[i];
+				player_x3[i] = player_y3[i];
+				player_y3[i] = -temp;
 			}
 		}
 		render_grid(player);
@@ -377,11 +425,13 @@ int communism(int argc, char *argv[]) {
 
 	grid1 = mm_alloc(COMMUNISM_WIDTH * COMMUNISM_HEIGHT);
 	grid2 = mm_alloc(COMMUNISM_WIDTH * COMMUNISM_HEIGHT);
+	grid3 = mm_alloc(COMMUNISM_WIDTH * COMMUNISM_HEIGHT);
 
 	for (j = 0; j < COMMUNISM_HEIGHT; j++) {
 		for (i = 0; i < COMMUNISM_WIDTH; i++) {
 			*(grid1 + i + j * COMMUNISM_WIDTH) = 0;
 			*(grid2 + i + j * COMMUNISM_WIDTH) = 0;
+			*(grid3 + i + j * COMMUNISM_WIDTH) = 0;
 		}
 	}
 
@@ -389,6 +439,7 @@ int communism(int argc, char *argv[]) {
 
 	generate_piece(1, &player_pos_x1, &player_pos_y1, &player_color1, player_x1, player_y1);
 	generate_piece(2, &player_pos_x2, &player_pos_y2, &player_color2, player_x2, player_y2);
+	generate_piece(3, &player_pos_x3, &player_pos_y3, &player_color3, player_x3, player_y3);
 	while (1) {
 		i = 0; 
 		while (i++ < spin_lock) {
@@ -396,6 +447,7 @@ int communism(int argc, char *argv[]) {
 
 		down_piece(1);
 		down_piece(2);
+		down_piece(3);
 	}
 
 	return 0;
@@ -418,37 +470,53 @@ void communism_keyboard_handler(char keycode) {
 
     switch(keycode) {
     	case UP_KEY_CODE:
-    		rotate_piece(1);
+    		rotate_piece(3);
     		return;
     	case DOWN_KEY_CODE:
-    		down_piece(1);
+    		down_piece(3);
     		return;
     	case LEFT_KEY_CODE:
-    		move_piece(-1, 1);
+    		move_piece(-1, 3);
     		return;
     	case RIGHT_KEY_CODE:
-    		move_piece(1, 1);
+    		move_piece(1, 3);
     		return;
     	case ENTER_KEY_CODE:
-    		drop_piece(1);
+    		drop_piece(3);
     }
 
     int ascii_key = keyboard_map[(unsigned char) keycode];
 
     switch(ascii_key) {
-    	case ' ':
-    		drop_piece(2);
+    	case 'q':
+    		drop_piece(1);
     		return;
     	case 'w':
-    		rotate_piece(2);
+    		rotate_piece(1);
     		return;
     	case 'a':
-    		move_piece(-1, 2);
+    		move_piece(-1, 1);
     		return;
     	case 's':
-    		down_piece(2);
+    		down_piece(1);
     		return;
     	case 'd':
+    		move_piece(1, 1);
+    		return;
+
+    	case 'b':
+    		drop_piece(2);
+    		return;
+    	case 'j':
+    		rotate_piece(2);
+    		return;
+    	case 'h':
+    		move_piece(-1, 2);
+    		return;
+    	case 'k':
+    		down_piece(2);
+    		return;
+    	case 'l':
     		move_piece(1, 2);
     		return;
 
@@ -459,6 +527,8 @@ extern void video_mode(void);
 int communism_exit() {
 	mm_free(grid1);
 	mm_free(grid2);
+	mm_free(grid3);
+
 
 //	video_mode();
 	halt();
