@@ -17,7 +17,7 @@ typedef struct texture_s {
 } texture_t;
 
 
-void video_fuck(void);
+int videorun(int argc, char * argv[]);
 
 #endif
 

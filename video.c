@@ -155,7 +155,7 @@ extern void video_mode(void);
 extern void text_mode(void);
 extern int get_mode(void);
 extern int init_vga(int blah);
-void video_fuck(void){
+int videorun(int argc, char * argv[]){
 	init_vga(0);
 	unsigned char * vidmem = (unsigned char *)0xa0000;
 	vid_buffer = vidmem;
@@ -173,4 +173,5 @@ void video_fuck(void){
 //	sanders_printf("video mode is %i\n", get_mode());
 //	video_mode();
 //	text_mode();
+	return 1;
 }

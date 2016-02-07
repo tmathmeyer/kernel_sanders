@@ -3,29 +3,29 @@
 #include "map.h"
 #include "sanders_shell.h"
 #include "syscall.h"
-#include "keyboard_map.h"
 #include "sandersio.h"
 #include "stringlib.h"
 #include "video.h"
+#include "sandersboard.h"
 
-#define KEYBOARD_DATA_PORT 0x60
-#define KEYBOARD_STATUS_PORT 0x64
 #define IDT_SIZE 256
 #define INTERRUPT_GATE 0x8e
 #define KERNEL_CODE_SEGMENT_OFFSET 0x08
-#define ENTER_KEY_CODE 0x1C
-#define BACKSPACE_KEY_CODE 0x0E
 
 #define VERSION_STRING "Version 0.0.0"
 
+void (*current_keyboard_handler)(char keycode);
+
+
 unsigned char* keyboard_map;
+unsigned char key_status[128] = {0};
 extern void keyboard_handler(void);
-extern char read_port(unsigned short port);
-extern void write_port(unsigned short port, unsigned char data);
 extern void load_idt(unsigned long *idt_ptr);
 unsigned char sandersin[255];
 unsigned char sandersindex = 0;
 dmap *syscall_map;
+
+dmap *root_fs;
 
 struct IDT_entry {
     unsigned short int offset_lowerbits;
@@ -69,47 +69,15 @@ void kb_init(void) {
     //dvorak((int)0, (char**)0);
 }
 
-void keyboard_handler_main(void) {
-
-    unsigned char status;
-    char keycode;
-    // write EOI
-    write_port(0x20, 0x20);
-
-    status = read_port(KEYBOARD_STATUS_PORT);
-    // Lowest bit of status will be set if buffer is not empty
-    if (status & 0x01) {
-        keycode = read_port(KEYBOARD_DATA_PORT);
-        if(keycode < 0)
-            return;
-
-        if(keycode == ENTER_KEY_CODE) {
-            console_print("\n");
-            sandersin[sandersindex] = 0;
-            sandersindex = 0;
-            shell_run((char*)sandersin);
-            return;
-        }
-        if(keycode == BACKSPACE_KEY_CODE) {
-            //screentext_backspace();
-            sandersin[sandersindex--] = 0;
-            return;
-        }
-        console_writechar(keyboard_map[(unsigned char) keycode]);
-        sandersin[sandersindex++] = keyboard_map[(unsigned char) keycode];
-    }
-
-}
-
-
 int systemcheck() {
     if (mm_init()) { // mm_init has failed
         return 0;
     }
     sanders_print("initializing system check...\n");
+    sanders_printf("    visualbuffer = %i\n", sandersin);
 
     sanders_print("    memory... ");
-    char *mem = mm_alloc(256);
+    char *mem = mm_alloc(128);
     if (mem) {
         sanders_print("OK\n");
     } else {
@@ -130,14 +98,17 @@ int systemcheck() {
         return 0;
     }
 
+    sanders_print("    filesystem... ");
+    if (fs_init()) {
+        sanders_printf("NOT OK\n");
+    } else {
+        sanders_printf("OK\n");
+    }
+    
+
     sanders_print("completed system check\n");
     return 1;
 }
-
-void *__syscall(char *c) {
-    return map_get(syscall_map, c);
-}
-
 
 void kmain(void) {
     screentext_clear();
@@ -147,13 +118,26 @@ void kmain(void) {
     console_clear();
 	int i = 2;
     if (systemcheck()) {
-        syscall_map = map_new();
-            map_put(syscall_map, "dvorak", dvorak);
-            map_put(syscall_map, "h.soav", dvorak);
-            map_put(syscall_map, "qwerty", qwerty);
-            map_put(syscall_map, "',.pyf", qwerty);
-	    map_put(syscall_map, "video", video_fuck);
         sanders_printf("Welcome to Kernel Sanders, %s\n\n\n\n", VERSION_STRING);
+        set_default_keyboard_handler(&shell_keyboard_handler);
+        sanders_print("> ");
         while(1);
     }
+}
+
+#define SYSTEM(name) process(root(), #name, name)
+
+int fs_init() {
+    root_fs = map_new();
+    SYSTEM(dvorak);
+    SYSTEM(qwerty);
+    SYSTEM(videorun);
+    SYSTEM(touch);
+    SYSTEM(ls);
+    SYSTEM(sanders_sweeper);
+    return 0;
+}
+
+dmap *root() {
+    return root_fs;
 }
