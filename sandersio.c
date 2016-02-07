@@ -1,11 +1,12 @@
 #include "sandersio.h"
 #include "screentext.h"
 #include "stringlib.h"
+#include "sleep.h"
 
 int sanders_print(const char *string) {
     return sanders_printf(string);
 }
-
+extern void waiteight(void);
 // TODO: Remove duplicated code
 int sanders_printf(const char fmt[], ...) {
 	int chars = 0;
@@ -16,6 +17,8 @@ int sanders_printf(const char fmt[], ...) {
 
 	c = *fmt;
 	while (c) {
+//	waiteight();
+	sleepy_sanders(1);
 		switch (c) {
 			case '\b':
 				// screentext_backspace();

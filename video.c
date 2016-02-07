@@ -2,6 +2,7 @@
 #include "video.h"
 #include "sandersio.h"
 #include "boopt.h"
+#include "sleep.h"
 // LOTS OF TODO HERE
 
 unsigned char * vid_buffer;
@@ -151,9 +152,6 @@ void video_draw_triangle(unsigned int color, ivec_t *verts, void * tridata){
 	}
 }
 
-extern void video_mode(void);
-extern void text_mode(void);
-extern int get_mode(void);
 extern int init_vga(int blah);
 int videorun(int argc, char * argv[]){
 	init_vga(0);
@@ -161,15 +159,20 @@ int videorun(int argc, char * argv[]){
 	vid_buffer = vidmem;
 	vid_x = 320;
 	vid_y = 200;
-	int i;
+	int i,z;
 	/*
 	for(i = 0; i < 320 * 200; i++){
 		vidmem[i] = (i*123) % 255;
 	}*/
-	for(i = 50; i < 200; i++){
-		video_draw_line(i, i, 0, 320 - i, 200);
+	for(i = 0; i < 10000; i++){
+		for(z = 50; z < 200; z++){
+			video_draw_line(i, i/2+z % 320, 0, (320 - i -z) % 320, 200);
+		}
+		video_fill_rect(12, 50, 50, 100, 100);
+		for(z = 1; z; z++){
+			vid_x = 320;
+		}
 	}
-	video_fill_rect(12, 50, 50, 100, 100);
 //	sanders_printf("video mode is %i\n", get_mode());
 //	video_mode();
 //	text_mode();
