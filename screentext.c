@@ -36,6 +36,11 @@ void update_cursor(){
 	outb(0x3D5, (unsigned char )((position>>8)&0xFF));
 }
 
+void set_cursor_pos(int x, int y) {
+	screen_cursorx = x;
+	screen_cursory = y;
+	update_cursor();
+}
 
 void screentext_clear(void){
 	unsigned int ss = vid_lines * vid_col;

@@ -1,5 +1,5 @@
 #include "dog.h"
-
+/*
 void* fopen(char* fpath);
 int filelen(char* fpath);
 void fclose(char* fpath);
@@ -20,3 +20,4 @@ void dog_openfile(char* file) {
     }
 }
 
+*/
