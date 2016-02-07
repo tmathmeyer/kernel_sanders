@@ -1,7 +1,6 @@
 #ifndef SHELL_HEADER
 #define SHELL_HEADER
-
-#include "sfs.h"
+typedef int (*FS_PROC)(int argc, char *argv[]);
 
 FS_PROC shell_command_lookup(char *cmd);
 extern unsigned char sandersin[255];

@@ -8,6 +8,7 @@
 #include "video.h"
 #include "sandersboard.h"
 #include "screentext.h"
+#include "goodstring.h"
 
 #define IDT_SIZE 256
 #define INTERRUPT_GATE 0x8e
@@ -23,9 +24,22 @@ extern void keyboard_handler(void);
 extern void load_idt(unsigned long *idt_ptr);
 unsigned char sandersin[255];
 unsigned char sandersindex = 0;
-dmap *syscall_map;
 
-dmap *root_fs;
+#define SYSTEM(name) { \
+    if (!gs_comp(exe, #name)) { \
+        return name; \
+    } \
+}
+
+void *execute(char *exe) {
+    SYSTEM(dvorak);
+    SYSTEM(qwerty);
+    SYSTEM(videorun);
+    SYSTEM(ls);
+    SYSTEM(si);
+    SYSTEM(sanderssweeper);
+    return NULL;
+}
 
 struct IDT_entry {
     unsigned short int offset_lowerbits;
@@ -84,14 +98,6 @@ int systemcheck() {
         return 0;
     }
 
-    console_print("    filesystem... ");
-    if (fs_init()) {
-        console_print("NOT OK\n");
-    } else {
-        console_print("OK\n");
-    }
-    
-
     console_print("completed system check\n");
     return 1;
 }
@@ -109,23 +115,4 @@ void kmain(void) {
         console_print("> ");
         while(1);
     }
-}
-
-#define SYSTEM(name) process(root(), #name, name)
-
-int fs_init() {
-    root_fs = map_new();
-    SYSTEM(dvorak);
-    SYSTEM(qwerty);
-    SYSTEM(videorun);
-    SYSTEM(touch);
-    SYSTEM(ls);
-    SYSTEM(si);
-    SYSTEM(dog);
-    SYSTEM(sanderssweeper);
-    return 0;
-}
-
-dmap *root() {
-    return root_fs;
 }

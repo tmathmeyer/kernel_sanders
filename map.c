@@ -12,8 +12,6 @@ struct map *map_init(unsigned int size) {
 }
 
 void *map_put(struct map *map, char *key, void *val) {
-    console_print(key);
-    console_print("\n");
     struct kvpl *newl = mm_alloc(sizeof(struct kvpl));
     newl->key = gs_dup(key);
     newl->val = val;
@@ -24,9 +22,6 @@ void *map_put(struct map *map, char *key, void *val) {
 
 void *map_get(struct map *map, char *key) {
     struct kvpl *c_temp = map->body;
-    console_print("looking up: ");
-    console_print(key);
-    console_print("\n");
     while(c_temp) {
         if (gs_comp(key, c_temp->key)==0) {
             return c_temp->val;

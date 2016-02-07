@@ -4,7 +4,6 @@
 #include "goodstring.h"
 #include "halt.h"
 #include "video.h"
-#include "sfs.h"
 #include "screentext.h"
 #include "sandersboard.h"
 
