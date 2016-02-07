@@ -116,7 +116,7 @@ void kmain(void) {
     console_clear();
     if (systemcheck()) {
         sanders_printf("Welcome to Kernel Sanders, %s\n\n\n\n", VERSION_STRING);
-        set_keyboard_handler(&shell_keyboard_handler);
+        set_default_keyboard_handler(&shell_keyboard_handler);
         sanders_print("> ");
         while(1);
     }
@@ -130,6 +130,7 @@ int fs_init() {
     SYSTEM(qwerty);
     SYSTEM(touch);
     SYSTEM(ls);
+    SYSTEM(sanders_sweeper);
     return 0;
 }
 

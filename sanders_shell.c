@@ -2,7 +2,6 @@
 #include "sandersio.h"
 #include "syscall.h"
 #include "goodstring.h"
-#include "halt.h"
 #include "sfs.h"
 #include "sandersboard.h"
 
@@ -40,8 +39,18 @@ void shell_keyboard_handler(char keycode) {
     }
     // console_writechar(keyboard_map[(unsigned char) keycode]);
     // sanders_printf("WHAT?");
-    sanders_printf("%c", keyboard_map[(unsigned char) keycode]);
-    sandersin[sandersindex++] = keyboard_map[(unsigned char) keycode];
+    char ascii_key = keyboard_map[(unsigned char) keycode];
+    if (ascii_key) {
+	    if (key_status[SHIFT_KEY_CODE] == 1) {
+	    	if (ascii_key >= 'a' && ascii_key <= 'z') {
+	    		ascii_key -= 32;
+	    	} else if (ascii_key == '-') {
+	    		ascii_key = '_';
+	    	}
+    	}
+    	sanders_printf("%c", ascii_key);
+	    sandersin[sandersindex++] = ascii_key;
+    }
 }
 
 void shell_run(char *line) {
